@@ -54,7 +54,7 @@ export function BudgetsView() {
   // Month budgets enriched with real-time spending
   const currentMonthBudgets = useMemo(() => {
     return budgets
-      .filter((b) => b.month === activeMonth)
+      .filter((b) => !b.month || b.month === activeMonth)
       .map((b) => {
         const spent = categorySpendingMap[b.category] || 0
         const limit = b.limitAmount || 1

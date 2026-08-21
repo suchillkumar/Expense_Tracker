@@ -451,10 +451,51 @@ export const api = {
   },
 
   async generateAIBudget(input: { monthlyIncome: number; age?: number; existingExpenses?: number; savingsGoal?: number; financialGoal?: string }): Promise<BudgetRecommendation> {
-    return request<BudgetRecommendation>('/ai/budget', {
-      method: 'POST',
-      body: input,
-    })
+    try {
+      return await request<BudgetRecommendation>('/ai/budget', {
+        method: 'POST',
+        body: input,
+      })
+    } catch {
+      // 50/30/20 algorithmic fallback
+      const income = input.monthlyIncome || 60000
+      const needs = Math.round(income * 0.50)
+      const wants = Math.round(income * 0.30)
+      const savings = Math.round(income * 0.20)
+      const emergency = Math.round(income * 0.10)
+      return {
+        monthlyIncome: income,
+        needs: {
+          amount: needs,
+          percentage: 50,
+          description: 'Essential Living: Housing, groceries, utilities, transit, and healthcare.',
+        },
+        wants: {
+          amount: wants,
+          percentage: 30,
+          description: 'Lifestyle & Discretionary: Dining out, entertainment, shopping, and subscriptions.',
+        },
+        savings: {
+          amount: savings,
+          percentage: 20,
+          description: 'Wealth Accumulation: Emergency fund, investments, retirement, and milestone goals.',
+        },
+        emergencyFund: {
+          amount: emergency,
+          percentage: 10,
+          description: 'Liquidity Buffer: 3-6 months of essential living expenses.',
+        },
+        categoryBudgets: [
+          { category: 'Food', recommendedAmount: Math.round(needs * 0.40), percentageOfIncome: 20, rationale: 'Groceries and basic meal prep' },
+          { category: 'Bills', recommendedAmount: Math.round(needs * 0.35), percentageOfIncome: 17.5, rationale: 'Electricity, water, WiFi, and phone bills' },
+          { category: 'Transport', recommendedAmount: Math.round(needs * 0.15), percentageOfIncome: 7.5, rationale: 'Fuel, transit passes, and maintenance' },
+          { category: 'Healthcare', recommendedAmount: Math.round(needs * 0.10), percentageOfIncome: 5, rationale: 'Pharmacy, health wellness, and medical' },
+          { category: 'Shopping', recommendedAmount: Math.round(wants * 0.50), percentageOfIncome: 15, rationale: 'Apparel, accessories, and personal items' },
+          { category: 'Entertainment', recommendedAmount: Math.round(wants * 0.35), percentageOfIncome: 10.5, rationale: 'Movies, outings, and streaming' },
+          { category: 'Travel', recommendedAmount: Math.round(wants * 0.15), percentageOfIncome: 4.5, rationale: 'Weekend getaways and leisure commutes' },
+        ],
+      }
+    }
   },
 
   async getAIInsights(): Promise<AIInsight[]> {
