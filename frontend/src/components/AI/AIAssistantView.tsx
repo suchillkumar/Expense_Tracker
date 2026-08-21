@@ -12,19 +12,19 @@ import {
 
 type ActiveTab = 'chat' | 'analysis' | 'predictions' | 'savings'
 
-const QUICK_PROMPTS = [
-  'Where did I spend the most this month?',
-  'How much did I spend on food and dining?',
-  'Can I save ₹5,000 this month?',
-  'Which category increased the most vs last month?',
-  'Give me a recommended budget for next month',
-  'Why are my expenses increasing?',
-]
-
 export function AIAssistantView() {
   const { currency } = useExpense()
   const toast = useToast()
   const [activeTab, setActiveTab] = useState<ActiveTab>('chat')
+
+  const quickPrompts = [
+    'Where did I spend the most this month?',
+    'How much did I spend on food and dining?',
+    `Can I save ${formatMoney(5000, currency)} this month?`,
+    'Which category increased the most vs last month?',
+    'Give me a recommended budget for next month',
+    'Why are my expenses increasing?',
+  ]
 
   // Chat State
   const [messages, setMessages] = useState<AIChatMessage[]>([
@@ -276,7 +276,7 @@ export function AIAssistantView() {
             <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider shrink-0 mr-1">
               Suggestions:
             </span>
-            {QUICK_PROMPTS.map((q) => (
+            {quickPrompts.map((q) => (
               <button
                 key={q}
                 onClick={() => handleSendMessage(q)}
@@ -494,8 +494,8 @@ export function AIAssistantView() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {(savingsTips.recommendations || [
-                  { title: 'Reduce Weekend Dining Leaks', impact: 'Save ~₹1,200/mo', description: 'Weekend restaurant orders account for 38% of your discretionary spending.' },
-                  { title: 'Consolidate Cloud & Subscriptions', impact: 'Save ~₹450/mo', description: 'Multiple entertainment and storage subscriptions are active simultaneously.' }
+                  { title: 'Reduce Weekend Dining Leaks', impact: `Save ~${formatMoney(1200, currency)}/mo`, description: 'Weekend restaurant orders account for 38% of your discretionary spending.' },
+                  { title: 'Consolidate Cloud & Subscriptions', impact: `Save ~${formatMoney(450, currency)}/mo`, description: 'Multiple entertainment and storage subscriptions are active simultaneously.' }
                 ]).map((tip, idx) => (
                   <div key={idx} className="fintech-card p-5 space-y-2">
                     <div className="flex items-center justify-between">

@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { useExpense } from '../../context/ExpenseContext'
 import { useAuth } from '../../context/AuthContext'
 import { useToast } from '../../context/ToastContext'
-import { formatMoney } from '../../services/currencyService'
+import { formatMoney, getSymbol } from '../../services/currencyService'
 import { api } from '../../services/api'
 import { Budget, BudgetRecommendation, EXPENSE_CATEGORIES } from '../../types'
 
@@ -576,16 +576,23 @@ export function BudgetsView() {
               </div>
 
               <div>
-                <label className="block font-bold text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">Monthly Limit Amount ({currency}) *</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  required
-                  value={limitAmount}
-                  onChange={(e) => setLimitAmount(e.target.value)}
-                  placeholder="e.g. 8000"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#243244] text-xs font-medium text-[#1E293B] dark:text-[#F8FAFC] focus:ring-2 focus:ring-blue-500/20 outline-none"
-                />
+                <label className="block font-bold text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">
+                  Monthly Limit Amount ({getSymbol(currency)} {currency}) *
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#64748B] dark:text-[#94A3B8]">
+                    {getSymbol(currency)}
+                  </span>
+                  <input
+                    type="number"
+                    step="0.01"
+                    required
+                    value={limitAmount}
+                    onChange={(e) => setLimitAmount(e.target.value)}
+                    placeholder="e.g. 8000"
+                    className="w-full pl-8 pr-3.5 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#243244] text-xs font-medium text-[#1E293B] dark:text-[#F8FAFC] focus:ring-2 focus:ring-blue-500/20 outline-none"
+                  />
+                </div>
               </div>
 
               <div>

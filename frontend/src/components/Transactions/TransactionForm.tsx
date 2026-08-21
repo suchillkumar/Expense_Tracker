@@ -3,6 +3,7 @@ import { useExpense } from '../../context/ExpenseContext'
 import { useToast } from '../../context/ToastContext'
 import { Transaction, TransactionType } from '../../types'
 import { categorize } from '../../services/categorizationService'
+import { getSymbol } from '../../services/currencyService'
 
 interface TransactionFormProps {
   initial?: Transaction | null
@@ -174,18 +175,23 @@ export function TransactionForm({ initial, presetType = 'expense', onClose }: Tr
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1">
-                Amount ({currency}) *
+                Amount ({getSymbol(currency)} {currency}) *
               </label>
-              <input
-                type="number"
-                min="0.01"
-                step="any"
-                required
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="0.00"
-                className="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#243244] text-sm font-semibold text-[#1E293B] dark:text-[#F8FAFC] focus:ring-2 focus:ring-blue-500/20 focus:border-[#2563EB] outline-none"
-              />
+              <div className="relative">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-[#64748B] dark:text-[#94A3B8]">
+                  {getSymbol(currency)}
+                </span>
+                <input
+                  type="number"
+                  min="0.01"
+                  step="any"
+                  required
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="0.00"
+                  className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#243244] text-sm font-semibold text-[#1E293B] dark:text-[#F8FAFC] focus:ring-2 focus:ring-blue-500/20 focus:border-[#2563EB] outline-none"
+                />
+              </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1">
