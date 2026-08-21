@@ -313,9 +313,9 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
       {/* ── Demo Data Banner for empty state ── */}
       {transactions.length === 0 && (
-        <div className="fintech-card bg-gradient-to-r from-blue-50/60 via-slate-50 to-purple-50/60 dark:from-slate-900 dark:via-[#0F172A] dark:to-slate-900 p-6 flex flex-wrap items-center justify-between gap-4 border-dashed border-2 border-blue-200 dark:border-slate-700">
+        <div className="fintech-card bg-white dark:bg-[#121212] p-6 flex flex-wrap items-center justify-between gap-4 border-dashed border-2 border-[#E2E8F0] dark:border-[#262626]">
           <div>
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-100 dark:bg-blue-950 text-[#2563EB] dark:text-blue-400">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-50 dark:bg-blue-950/60 text-[#2563EB] dark:text-blue-400">
               ⚡ Quick Start
             </span>
             <h3 className="text-base font-bold text-[#0F172A] dark:text-white mt-1.5">No transactions yet</h3>
