@@ -9,8 +9,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('expense_tracker_theme') || 'light';
+          var isDark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
-  <body class="font-sans antialiased text-[#1E293B] dark:text-[#F8FAFC]">
+  <body class="font-sans antialiased bg-white dark:bg-[#090D16] text-[#0F172A] dark:text-[#FFFFFF]">
     <div id="root"></div>
     <script type="module" src="/src/index.tsx"></script>
   </body>

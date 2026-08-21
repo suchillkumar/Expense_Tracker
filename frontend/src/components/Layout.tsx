@@ -135,11 +135,11 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
           {/* Dark / Light Mode Toggle Pill */}
           <button
             onClick={toggleTheme}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-slate-100 hover:bg-slate-200 dark:bg-[#1E293B] dark:hover:bg-[#334155] text-[#1E293B] dark:text-[#F8FAFC] shadow-xs transition-all text-xs font-medium"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-[#1F2937] bg-slate-100 hover:bg-slate-200 dark:bg-[#1E293B] dark:hover:bg-[#243244] text-[#0F172A] dark:text-[#FFFFFF] shadow-xs transition-all text-xs font-semibold cursor-pointer"
             title={isDark ? 'Switch to Light theme' : 'Switch to Dark theme'}
           >
-            <span className="text-sm">{isDark ? '☀️' : '🌙'}</span>
-            <span className="hidden sm:inline text-xs font-medium">{isDark ? 'Light' : 'Dark'}</span>
+            <span className="text-sm">{isDark ? '🌙' : '☀️'}</span>
+            <span className="hidden sm:inline text-xs font-semibold">{isDark ? 'Dark' : 'Light'}</span>
           </button>
 
           {/* User Profile Pill */}

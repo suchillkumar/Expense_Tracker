@@ -86,26 +86,11 @@
 /* Custom Micro-Interactions & Clean Fintech Aesthetics */
 @layer utilities {
   .fintech-card {
-    background-color: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 1rem;
-    box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.02);
-    transition: all 0.2s ease-in-out;
+    @apply bg-white dark:bg-[#111827] border border-[#E2E8F0] dark:border-[#1F2937] rounded-2xl shadow-xs transition-all;
   }
 
-  .dark .fintech-card {
-    background-color: #111827;
-    border: 1px solid #1F2937;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.35);
-  }
-
-  .fintech-card-hover:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
-  }
-
-  .dark .fintech-card-hover:hover {
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+  .fintech-card-hover {
+    @apply transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md;
   }
 
   .no-scrollbar::-webkit-scrollbar {
