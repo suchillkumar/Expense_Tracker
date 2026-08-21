@@ -196,10 +196,10 @@ export function BudgetsView() {
       {/* 1. Header & Controls */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-black text-[#0F172A] dark:text-white tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#1E293B] dark:text-[#F8FAFC]">
             Budgets & Limits
           </h2>
-          <p className="text-xs text-[#64748B] dark:text-slate-400 mt-0.5">
+          <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5 font-normal">
             Plan category limits, track live utilization, and generate AI budget allocations.
           </p>
         </div>
@@ -210,12 +210,12 @@ export function BudgetsView() {
             type="month"
             value={activeMonth}
             onChange={(e) => setActiveMonth(e.target.value)}
-            className="px-3.5 py-2 rounded-xl border border-[#E2E8F0] dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold text-[#0F172A] dark:text-white shadow-xs focus:outline-none"
+            className="px-3.5 py-2 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#243244] text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] shadow-xs focus:outline-none"
           />
 
           <button
             onClick={handleOpenCreate}
-            className="px-4 py-2.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold shadow-sm shadow-blue-500/20 transition-all flex items-center gap-1.5 active:scale-[0.98]"
+            className="px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#60A5FA] text-white text-sm font-medium shadow-xs transition-all flex items-center gap-1.5"
           >
             <span>+</span> Create Budget
           </button>
@@ -226,9 +226,9 @@ export function BudgetsView() {
       <div className="flex items-center bg-slate-100 dark:bg-[#243244] p-1.5 rounded-xl gap-1 max-w-md border border-[#E2E8F0] dark:border-[#334155]">
         <button
           onClick={() => setActiveTab('monthly')}
-          className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
+          className={`flex-1 py-1.5 rounded-lg text-sm font-medium transition-all ${
             activeTab === 'monthly'
-              ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+              ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs font-semibold'
               : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
           }`}
         >
@@ -239,9 +239,9 @@ export function BudgetsView() {
             setActiveTab('ai_recommendation')
             if (!aiBudget) handleGenerateAIBudget()
           }}
-          className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 ${
+          className={`flex-1 py-1.5 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-1 ${
             activeTab === 'ai_recommendation'
-              ? 'bg-white dark:bg-[#1E293B] text-[#7C3AED] dark:text-[#A78BFA] shadow-xs'
+              ? 'bg-white dark:bg-[#1E293B] text-[#7C3AED] dark:text-[#A78BFA] shadow-xs font-semibold'
               : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
           }`}
         >
@@ -249,9 +249,9 @@ export function BudgetsView() {
         </button>
         <button
           onClick={() => setActiveTab('yearly')}
-          className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
+          className={`flex-1 py-1.5 rounded-lg text-sm font-medium transition-all ${
             activeTab === 'yearly'
-              ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+              ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs font-semibold'
               : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
           }`}
         >
@@ -262,42 +262,42 @@ export function BudgetsView() {
       {/* ── TAB 1: MONTHLY BUDGET TRACKER ── */}
       {activeTab === 'monthly' && (
         <div className="space-y-6">
-          {/* Executive Overview Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-            <div className="fintech-card p-5 border-t-3 border-t-[#2563EB]">
-              <p className="text-[11px] font-bold text-[#64748B] dark:text-slate-400 uppercase tracking-wider">Total Budget Limit</p>
-              <p className="text-2xl font-black text-[#0F172A] dark:text-white mt-1.5 tabular-numbers">
+          {/* Top 4 Summary Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="fintech-card p-5 border-t-3 border-t-[#2563EB] dark:border-t-[#3B82F6]">
+              <p className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Total Budget</p>
+              <p className="text-2xl font-semibold text-[#2563EB] dark:text-[#3B82F6] mt-1.5 tabular-numbers">
                 {formatMoney(totalBudgeted, currency)}
               </p>
-              <p className="text-[11px] text-[#64748B] dark:text-slate-400 mt-1">{currentMonthBudgets.length} Categories Active</p>
+              <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-1 font-normal">{currentMonthBudgets.length} Categories Active</p>
             </div>
 
-            <div className="fintech-card p-5 border-t-3 border-t-[#EF4444]">
-              <p className="text-[11px] font-bold text-[#64748B] dark:text-slate-400 uppercase tracking-wider">Total Spent so Far</p>
-              <p className="text-2xl font-black text-[#EF4444] mt-1.5 tabular-numbers">
+            <div className="fintech-card p-5 border-t-3 border-t-[#DC2626] dark:border-t-[#F87171]">
+              <p className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Total Spent so Far</p>
+              <p className="text-2xl font-semibold text-[#DC2626] dark:text-[#F87171] mt-1.5 tabular-numbers">
                 {formatMoney(totalSpent, currency)}
               </p>
-              <p className="text-[11px] text-[#64748B] dark:text-slate-400 mt-1">{overallUtilization}% Utilized</p>
+              <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-1 font-normal">{overallUtilization}% Utilized</p>
             </div>
 
-            <div className="fintech-card p-5 border-t-3 border-t-[#10B981]">
-              <p className="text-[11px] font-bold text-[#64748B] dark:text-slate-400 uppercase tracking-wider">Remaining Buffer</p>
-              <p className="text-2xl font-black text-[#10B981] mt-1.5 tabular-numbers">
+            <div className="fintech-card p-5 border-t-3 border-t-[#16A34A] dark:border-t-[#22C55E]">
+              <p className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Remaining Buffer</p>
+              <p className="text-2xl font-semibold text-[#16A34A] dark:text-[#22C55E] mt-1.5 tabular-numbers">
                 {formatMoney(totalRemaining, currency)}
               </p>
-              <p className="text-[11px] text-[#64748B] dark:text-slate-400 mt-1">Available to spend</p>
+              <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-1 font-normal">Available to spend</p>
             </div>
 
-            <div className="fintech-card p-5 border-t-3 border-t-[#7C3AED]">
-              <p className="text-[11px] font-bold text-[#64748B] dark:text-slate-400 uppercase tracking-wider">Health Status</p>
+            <div className="fintech-card p-5 border-t-3 border-t-[#7C3AED] dark:border-t-[#A78BFA]">
+              <p className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Health Status</p>
               <div className="mt-2">
                 <span
-                  className={`inline-block px-3 py-1 rounded-full text-xs font-black ${
+                  className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
                     overallUtilization >= 100
-                      ? 'bg-red-100 text-[#EF4444] dark:bg-red-950/60'
+                      ? 'bg-red-50 text-[#DC2626] dark:bg-red-950/60 dark:text-[#F87171]'
                       : overallUtilization >= 80
-                      ? 'bg-amber-100 text-[#F59E0B] dark:bg-amber-950/60'
-                      : 'bg-emerald-100 text-[#10B981] dark:bg-emerald-950/60'
+                      ? 'bg-amber-50 text-[#D97706] dark:bg-amber-950/60 dark:text-[#FBBF24]'
+                      : 'bg-green-50 text-[#16A34A] dark:bg-green-950/60 dark:text-[#22C55E]'
                   }`}
                 >
                   {overallUtilization >= 100
@@ -356,14 +356,14 @@ export function BudgetsView() {
                     </div>
 
                     <span
-                      className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                      className={`px-2.5 py-1 rounded-full text-xs font-medium uppercase tracking-wider ${
                         b.status === 'exceeded'
-                          ? 'bg-red-50 text-[#EF4444] dark:bg-red-950/60'
+                          ? 'bg-red-50 text-[#DC2626] dark:bg-red-950/60 dark:text-[#F87171]'
                           : b.status === 'near_limit'
-                          ? 'bg-amber-50 text-[#F59E0B] dark:bg-amber-950/60'
+                          ? 'bg-amber-50 text-[#D97706] dark:bg-amber-950/60 dark:text-[#FBBF24]'
                           : b.status === 'warning'
-                          ? 'bg-amber-50 text-[#F59E0B] dark:bg-amber-950/60'
-                          : 'bg-emerald-50 text-[#10B981] dark:bg-emerald-950/60'
+                          ? 'bg-amber-50 text-[#D97706] dark:bg-amber-950/60 dark:text-[#FBBF24]'
+                          : 'bg-green-50 text-[#16A34A] dark:bg-green-950/60 dark:text-[#22C55E]'
                       }`}
                     >
                       {b.status === 'exceeded' ? 'Exceeded' : `${b.percentage}% Used`}
@@ -372,17 +372,17 @@ export function BudgetsView() {
 
                   {/* Horizontal Progress Bar */}
                   <div className="space-y-1.5">
-                    <div className="h-2.5 w-full bg-gray-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div className="h-2 w-full bg-slate-100 dark:bg-[#334155] rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all duration-500 ${barColors[b.status]}`}
                         style={{ width: `${Math.min(b.percentage, 100)}%` }}
                       />
                     </div>
-                    <div className="flex items-center justify-between text-xs font-bold">
-                      <span className="text-[#0F172A] dark:text-white tabular-numbers">
+                    <div className="flex items-center justify-between text-xs font-semibold">
+                      <span className="text-[#1E293B] dark:text-[#F8FAFC] tabular-numbers">
                         Spent: {formatMoney(b.spentAmount, currency)}
                       </span>
-                      <span className={b.remainingAmount > 0 ? 'text-[#10B981]' : 'text-[#EF4444]'}>
+                      <span className={b.remainingAmount > 0 ? 'text-[#16A34A] dark:text-[#22C55E]' : 'text-[#DC2626] dark:text-[#F87171]'}>
                         {b.remainingAmount > 0
                           ? `Remaining: ${formatMoney(b.remainingAmount, currency)}`
                           : `Over by ${formatMoney(b.spentAmount - b.limitAmount, currency)}`}
@@ -391,17 +391,17 @@ export function BudgetsView() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#E2E8F0] dark:border-slate-800">
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#E2E8F0] dark:border-[#334155]">
                     <button
                       onClick={() => handleOpenEdit(b)}
-                      className="p-1.5 rounded-lg text-[#64748B] hover:text-[#2563EB] hover:bg-blue-50 dark:hover:bg-blue-950 text-xs transition-colors"
+                      className="p-1.5 rounded-lg text-[#64748B] hover:text-[#2563EB] hover:bg-blue-50 dark:hover:bg-[#243244] text-xs font-medium transition-colors"
                       title="Edit Limit"
                     >
                       ✏️ Edit
                     </button>
                     <button
                       onClick={() => setDeletingId(b.id)}
-                      className="p-1.5 rounded-lg text-[#64748B] hover:text-[#EF4444] hover:bg-red-50 dark:hover:bg-red-950 text-xs transition-colors"
+                      className="p-1.5 rounded-lg text-[#64748B] hover:text-[#DC2626] hover:bg-red-50 dark:hover:bg-[#243244] text-xs font-medium transition-colors"
                       title="Delete Budget"
                     >
                       🗑️ Delete
@@ -417,16 +417,16 @@ export function BudgetsView() {
       {/* ── TAB 2: AI 50/30/20 BUDGET RECOMMENDATION ── */}
       {activeTab === 'ai_recommendation' && (
         <div className="space-y-6">
-          <div className="fintech-card bg-gradient-to-r from-blue-50/50 via-white to-purple-50/50 dark:from-slate-900 dark:via-[#0F172A] dark:to-slate-900 p-6 sm:p-8 border border-[#E2E8F0] dark:border-slate-800">
+          <div className="fintech-card p-6 sm:p-8">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
-                <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-100 text-[#2563EB] dark:bg-blue-950 dark:text-blue-300">
+                <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-[#2563EB] dark:bg-blue-950/60 dark:text-[#60A5FA]">
                   ✨ AI 50/30/20 Rule Analysis
                 </span>
-                <h3 className="text-xl sm:text-2xl font-black mt-2 text-[#0F172A] dark:text-white">
+                <h3 className="text-xl sm:text-2xl font-bold mt-2 text-[#1E293B] dark:text-[#F8FAFC]">
                   Intelligent 50/30/20 Budget Model
                 </h3>
-                <p className="text-xs text-[#64748B] dark:text-slate-400 max-w-xl mt-1 leading-relaxed">
+                <p className="text-sm text-[#64748B] dark:text-[#94A3B8] max-w-xl mt-1 leading-relaxed font-normal">
                   Based on your monthly income ({formatMoney(user?.monthlyIncome || 60000, currency)}), our AI allocates 50% for Needs, 30% for Wants, and 20% for Savings.
                 </p>
               </div>
@@ -435,14 +435,14 @@ export function BudgetsView() {
                 <button
                   onClick={handleGenerateAIBudget}
                   disabled={aiLoading}
-                  className="px-4 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-slate-700 bg-white dark:bg-slate-800 text-[#0F172A] dark:text-white text-xs font-bold hover:bg-[#F8FAFC] transition-all"
+                  className="px-4 py-2 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#243244] text-[#1E293B] dark:text-[#F8FAFC] text-sm font-medium hover:bg-slate-50 transition-all"
                 >
                   {aiLoading ? 'Analyzing...' : '🔄 Recalculate'}
                 </button>
                 <button
                   onClick={handleApplyAIBudgets}
                   disabled={aiLoading || !aiBudget}
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#7C3AED] hover:from-blue-600 hover:to-purple-700 text-white text-xs font-bold shadow-md shadow-blue-500/20 transition-all"
+                  className="px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#60A5FA] text-white text-sm font-medium shadow-xs transition-all"
                 >
                   ⚡ Apply to My Budgets
                 </button>
@@ -453,52 +453,52 @@ export function BudgetsView() {
           {aiBudget && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               {/* Needs Card (50%) */}
-              <div className="fintech-card p-6 space-y-3 border-t-3 border-t-[#2563EB]">
+              <div className="fintech-card p-6 space-y-3 border-t-3 border-t-[#2563EB] dark:border-t-[#3B82F6]">
                 <div className="flex items-center justify-between">
                   <span className="text-2xl">🏠</span>
-                  <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-blue-100 text-[#2563EB] dark:bg-blue-950 dark:text-blue-300">
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-[#2563EB] dark:bg-blue-950/60 dark:text-[#60A5FA]">
                     50% Needs
                   </span>
                 </div>
-                <h4 className="text-base font-black text-[#0F172A] dark:text-white">Essential Living</h4>
-                <p className="text-2xl font-black text-[#2563EB] tabular-numbers">
+                <h4 className="text-base font-semibold text-[#1E293B] dark:text-[#F8FAFC]">Essential Living</h4>
+                <p className="text-2xl font-semibold text-[#2563EB] dark:text-[#3B82F6] tabular-numbers">
                   {formatMoney(aiBudget.needs?.amount || 30000, currency)}
                 </p>
-                <p className="text-xs text-[#64748B] dark:text-slate-400 leading-relaxed">
+                <p className="text-xs text-[#64748B] dark:text-[#94A3B8] leading-relaxed font-normal">
                   {aiBudget.needs?.description || 'Rent, groceries, utilities, transportation, and health coverage.'}
                 </p>
               </div>
 
               {/* Wants Card (30%) */}
-              <div className="fintech-card p-6 space-y-3 border-t-3 border-t-[#7C3AED]">
+              <div className="fintech-card p-6 space-y-3 border-t-3 border-t-[#7C3AED] dark:border-t-[#A78BFA]">
                 <div className="flex items-center justify-between">
                   <span className="text-2xl">🎉</span>
-                  <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-purple-100 text-[#7C3AED] dark:bg-purple-950 dark:text-purple-300">
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-[#7C3AED] dark:bg-purple-950/60 dark:text-[#A78BFA]">
                     30% Wants
                   </span>
                 </div>
-                <h4 className="text-base font-black text-[#0F172A] dark:text-white">Lifestyle & Fun</h4>
-                <p className="text-2xl font-black text-[#7C3AED] tabular-numbers">
+                <h4 className="text-base font-semibold text-[#1E293B] dark:text-[#F8FAFC]">Lifestyle & Fun</h4>
+                <p className="text-2xl font-semibold text-[#7C3AED] dark:text-[#A78BFA] tabular-numbers">
                   {formatMoney(aiBudget.wants?.amount || 18000, currency)}
                 </p>
-                <p className="text-xs text-[#64748B] dark:text-slate-400 leading-relaxed">
+                <p className="text-xs text-[#64748B] dark:text-[#94A3B8] leading-relaxed font-normal">
                   {aiBudget.wants?.description || 'Dining out, shopping, hobbies, streaming subscriptions, and entertainment.'}
                 </p>
               </div>
 
               {/* Savings Card (20%) */}
-              <div className="fintech-card p-6 space-y-3 border-t-3 border-t-[#10B981]">
+              <div className="fintech-card p-6 space-y-3 border-t-3 border-t-[#16A34A] dark:border-t-[#22C55E]">
                 <div className="flex items-center justify-between">
                   <span className="text-2xl">🌱</span>
-                  <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-100 text-[#10B981] dark:bg-emerald-950 dark:text-emerald-300">
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-[#16A34A] dark:bg-green-950/60 dark:text-[#22C55E]">
                     20% Savings
                   </span>
                 </div>
-                <h4 className="text-base font-black text-[#0F172A] dark:text-white">Wealth & Safety</h4>
-                <p className="text-2xl font-black text-[#10B981] tabular-numbers">
+                <h4 className="text-base font-semibold text-[#1E293B] dark:text-[#F8FAFC]">Wealth & Safety</h4>
+                <p className="text-2xl font-semibold text-[#16A34A] dark:text-[#22C55E] tabular-numbers">
                   {formatMoney(aiBudget.savings?.amount || 12000, currency)}
                 </p>
-                <p className="text-xs text-[#64748B] dark:text-slate-400 leading-relaxed">
+                <p className="text-xs text-[#64748B] dark:text-[#94A3B8] leading-relaxed font-normal">
                   {aiBudget.savings?.description || 'Emergency fund, investments, mutual funds, and long-term targets.'}
                 </p>
               </div>
@@ -511,28 +511,28 @@ export function BudgetsView() {
       {activeTab === 'yearly' && (
         <div className="fintech-card p-6 space-y-5">
           <div>
-            <h3 className="text-base font-bold text-[#0F172A] dark:text-white">Yearly Budget Projection</h3>
-            <p className="text-xs text-[#64748B] dark:text-slate-400 mt-0.5">
+            <h3 className="text-base font-semibold text-[#1E293B] dark:text-[#F8FAFC]">Yearly Budget Projection</h3>
+            <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5 font-normal">
               Annual expenditure forecast based on your current active category limits.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="p-4 rounded-2xl bg-[#F8FAFC] dark:bg-slate-800 border border-[#E2E8F0] dark:border-slate-700">
-              <p className="text-[11px] font-bold text-[#64748B] dark:text-slate-400 uppercase">Annual Budget Cap</p>
-              <p className="text-xl font-black text-[#0F172A] dark:text-white mt-1 tabular-numbers">
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-[#243244] border border-[#E2E8F0] dark:border-[#334155]">
+              <p className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Annual Budget Cap</p>
+              <p className="text-xl font-semibold text-[#1E293B] dark:text-[#F8FAFC] mt-1 tabular-numbers">
                 {formatMoney(totalBudgeted * 12, currency)}
               </p>
             </div>
-            <div className="p-4 rounded-2xl bg-[#F8FAFC] dark:bg-slate-800 border border-[#E2E8F0] dark:border-slate-700">
-              <p className="text-[11px] font-bold text-[#64748B] dark:text-slate-400 uppercase">Annual Expense Pace</p>
-              <p className="text-xl font-black text-[#EF4444] mt-1 tabular-numbers">
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-[#243244] border border-[#E2E8F0] dark:border-[#334155]">
+              <p className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Annual Expense Pace</p>
+              <p className="text-xl font-semibold text-[#DC2626] dark:text-[#F87171] mt-1 tabular-numbers">
                 {formatMoney(totalSpent * 12, currency)}
               </p>
             </div>
-            <div className="p-4 rounded-2xl bg-[#F8FAFC] dark:bg-slate-800 border border-[#E2E8F0] dark:border-slate-700">
-              <p className="text-[11px] font-bold text-[#64748B] dark:text-slate-400 uppercase">Target Annual Surplus</p>
-              <p className="text-xl font-black text-[#10B981] mt-1 tabular-numbers">
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-[#243244] border border-[#E2E8F0] dark:border-[#334155]">
+              <p className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Target Annual Surplus</p>
+              <p className="text-xl font-semibold text-[#16A34A] dark:text-[#22C55E] mt-1 tabular-numbers">
                 {formatMoney(Math.max(0, (user?.monthlyIncome || 60000) * 12 - totalBudgeted * 12), currency)}
               </p>
             </div>

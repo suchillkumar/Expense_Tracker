@@ -109,3 +109,7 @@ export function categorize(description: string): CategorizationResult {
 
   return { category: 'Other', confidence: 0.5 }
 }
+
+export function autoCategorize(description: string): string {
+  return categorize(description).category
+}

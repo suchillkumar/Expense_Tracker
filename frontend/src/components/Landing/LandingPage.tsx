@@ -47,39 +47,39 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-indigo-600/15 blur-[120px] rounded-full pointer-events-none" />
 
         <div className="max-w-4xl mx-auto relative z-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-indigo-400 text-xs font-bold mb-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-indigo-400 text-xs font-medium mb-6">
             <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
-            Smart AI-Powered Expense & Budget Management
+            Smart Expense & Budget Management
           </div>
 
-          <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-white leading-tight">
+          <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
             Master Your Money with{' '}
             <span className="bg-gradient-to-r from-indigo-400 via-sky-300 to-emerald-300 bg-clip-text text-transparent">
-              Expense Tracker AI
+              Expense Tracker
             </span>
           </h1>
 
-          <p className="mt-6 text-base sm:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-6 text-sm sm:text-base text-slate-400 max-w-2xl mx-auto leading-relaxed font-normal">
             Track every rupee, automate category tags in real time, build intelligent 50/30/20 monthly budgets, and chat directly with your AI financial advisor.
           </p>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <button
               onClick={onGetStarted}
-              className="px-7 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-sky-500 hover:from-indigo-500 hover:to-sky-400 text-white font-black text-sm shadow-xl shadow-indigo-600/25 transition-all transform hover:-translate-y-0.5"
+              className="px-7 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-sky-500 hover:from-indigo-500 hover:to-sky-400 text-white font-medium text-sm shadow-xl shadow-indigo-600/25 transition-all transform hover:-translate-y-0.5"
             >
               Start Free Today 🚀
             </button>
             <button
               onClick={onLogin}
-              className="px-7 py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-200 font-bold text-sm border border-slate-800 transition-all"
+              className="px-7 py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-slate-200 font-medium text-sm border border-slate-800 transition-all"
             >
               Sign In to Dashboard
             </button>
           </div>
 
           {/* Feature Highlights Pills */}
-          <div className="mt-14 pt-8 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-semibold text-slate-400">
+          <div className="mt-14 pt-8 border-t border-slate-800/80 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-medium text-slate-400">
             <div className="flex items-center justify-center gap-2">
               <span className="text-emerald-400">✓</span> Real-Time AI Categorization
             </div>
@@ -100,17 +100,17 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
       <section id="calculator" className="py-16 px-6 bg-slate-900/40 border-y border-slate-800">
         <div className="max-w-4xl mx-auto bg-slate-950 rounded-3xl border border-slate-800 p-8 sm:p-12 shadow-2xl">
           <div className="text-center max-w-xl mx-auto mb-8">
-            <h2 className="text-2xl sm:text-3xl font-black text-white">Interactive 50/30/20 Calculator</h2>
-            <p className="text-xs text-slate-400 mt-2">
-              Adjust your monthly earnings to see how the Expense Tracker AI model allocates your funds.
+            <h2 className="text-xl sm:text-2xl font-bold text-white">Interactive 50/30/20 Calculator</h2>
+            <p className="text-sm text-slate-400 mt-2 font-normal">
+              Adjust your monthly earnings to see how the Expense Tracker model allocates your funds.
             </p>
           </div>
 
           <div className="space-y-6 max-w-xl mx-auto">
             <div>
-              <div className="flex justify-between text-xs font-bold mb-2">
+              <div className="flex justify-between text-sm font-medium mb-2">
                 <span className="text-slate-400">Monthly Net Income</span>
-                <span className="text-indigo-400 text-base font-black">₹{monthlyIncome.toLocaleString()}</span>
+                <span className="text-indigo-400 text-base font-semibold">₹{monthlyIncome.toLocaleString()}</span>
               </div>
               <input
                 type="range"
@@ -125,15 +125,15 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
               <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 text-center">
-                <p className="text-[11px] font-bold text-slate-400 uppercase">Recommended Monthly Savings (20%)</p>
-                <p className="text-2xl font-black text-emerald-400 mt-1">
+                <p className="text-xs font-medium text-slate-400 uppercase">Recommended Monthly Savings (20%)</p>
+                <p className="text-2xl font-semibold text-emerald-400 mt-1">
                   ₹{Math.round(monthlyIncome * 0.2).toLocaleString()}
                 </p>
               </div>
 
               <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 text-center">
-                <p className="text-[11px] font-bold text-slate-400 uppercase">Estimated Annual Wealth Growth</p>
-                <p className="text-2xl font-black text-indigo-400 mt-1">
+                <p className="text-xs font-medium text-slate-400 uppercase">Estimated Annual Wealth Growth</p>
+                <p className="text-2xl font-semibold text-indigo-400 mt-1">
                   ₹{potentialAnnualSavings.toLocaleString()}
                 </p>
               </div>
@@ -142,7 +142,7 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
             <div className="text-center pt-2">
               <button
                 onClick={onGetStarted}
-                className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all shadow-md"
+                className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-all shadow-md"
               >
                 Apply to My Live Account →
               </button>
@@ -154,8 +154,8 @@ export function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
       {/* Comprehensive Features Grid */}
       <section id="features" className="py-24 px-6 max-w-7xl mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <h2 className="text-3xl sm:text-4xl font-black text-white">Engineered for Complete Financial Control</h2>
-          <p className="text-xs sm:text-sm text-slate-400 mt-3">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white">Engineered for Complete Financial Control</h2>
+          <p className="text-sm text-slate-400 mt-3 font-normal">
             Every feature is laser-focused on tracking expenses, monitoring budgets, and growing your personal savings.
           </p>
         </div>

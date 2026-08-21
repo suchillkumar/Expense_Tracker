@@ -77,7 +77,7 @@ export function LoginPage() {
   }
 
   const inputClass =
-    'w-full border border-[#E2E8F0] dark:border-[#334155] rounded-2xl px-4 py-3 text-xs bg-white dark:bg-[#243244] text-[#1E293B] dark:text-[#F8FAFC] placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-[#2563EB] transition-colors'
+    'w-full border border-[#E2E8F0] dark:border-[#334155] rounded-xl px-4 py-2.5 text-sm bg-white dark:bg-[#243244] text-[#1E293B] dark:text-[#F8FAFC] placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-[#2563EB] transition-colors font-normal'
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0F172A] flex items-center justify-center p-4 relative overflow-hidden">
@@ -89,7 +89,7 @@ export function LoginPage() {
         {/* Expense Tracker Brand Logo */}
         <div className="flex flex-col items-center justify-center mb-8">
           <Logo size="xl" showText={true} />
-          <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-2 font-medium">
+          <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mt-2 font-normal">
             Smart Expense Management
           </p>
         </div>
@@ -98,13 +98,13 @@ export function LoginPage() {
         <div className="bg-white dark:bg-[#1E293B] rounded-3xl shadow-xl p-8 border border-[#E2E8F0] dark:border-[#334155]">
           {/* Switcher Tab */}
           {(mode === 'login' || mode === 'register') && (
-            <div className="grid grid-cols-2 gap-1 bg-slate-100 dark:bg-[#243244] rounded-2xl p-1.5 mb-6 border border-[#E2E8F0] dark:border-[#334155]">
+            <div className="grid grid-cols-2 gap-1 bg-slate-100 dark:bg-[#243244] rounded-2xl p-1 mb-6 border border-[#E2E8F0] dark:border-[#334155]">
               <button
                 type="button"
                 onClick={() => { setMode('login'); setError('') }}
-                className={`py-2.5 rounded-xl text-xs font-bold transition-all ${
+                className={`py-2 rounded-xl text-sm font-medium transition-all ${
                   mode === 'login'
-                    ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+                    ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs font-semibold'
                     : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
                 }`}
               >
@@ -113,9 +113,9 @@ export function LoginPage() {
               <button
                 type="button"
                 onClick={() => { setMode('register'); setError('') }}
-                className={`py-2.5 rounded-xl text-xs font-bold transition-all ${
+                className={`py-2 rounded-xl text-sm font-medium transition-all ${
                   mode === 'register'
-                    ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+                    ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs font-semibold'
                     : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
                 }`}
               >
@@ -126,20 +126,20 @@ export function LoginPage() {
 
           {mode === 'forgot' && (
             <div className="mb-6">
-              <h2 className="text-base font-black text-[#1E293B] dark:text-[#F8FAFC]">Reset Account Password</h2>
-              <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-1">Enter your registered email to receive a password reset token.</p>
+              <h2 className="text-lg font-semibold text-[#1E293B] dark:text-[#F8FAFC]">Reset Account Password</h2>
+              <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mt-1 font-normal">Enter your registered email to receive a password reset token.</p>
             </div>
           )}
 
           {mode === 'reset' && (
             <div className="mb-6">
-              <h2 className="text-base font-black text-[#1E293B] dark:text-[#F8FAFC]">Set New Password</h2>
-              <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-1">Enter your reset token and new secure password.</p>
+              <h2 className="text-lg font-semibold text-[#1E293B] dark:text-[#F8FAFC]">Set New Password</h2>
+              <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mt-1 font-normal">Enter your reset token and new secure password.</p>
             </div>
           )}
 
           {error && (
-            <div className="p-3.5 mb-4 rounded-xl bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900/50 text-[#DC2626] dark:text-[#F87171] text-xs font-semibold flex items-center gap-2">
+            <div className="p-3 mb-4 rounded-xl bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900/50 text-[#DC2626] dark:text-[#F87171] text-xs font-medium flex items-center gap-2">
               <span>⚠️</span>
               <span>{error}</span>
             </div>
@@ -148,7 +148,7 @@ export function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === 'register' && (
               <div>
-                <label className="block text-xs font-bold text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">
+                <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1">
                   Full Name *
                 </label>
                 <input
@@ -164,7 +164,7 @@ export function LoginPage() {
 
             {(mode === 'login' || mode === 'register' || mode === 'forgot') && (
               <div>
-                <label className="block text-xs font-bold text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">
+                <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1">
                   Email Address *
                 </label>
                 <input
@@ -180,7 +180,7 @@ export function LoginPage() {
 
             {mode === 'register' && (
               <div>
-                <label className="block text-xs font-bold text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">
+                <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1">
                   Phone Number (Optional)
                 </label>
                 <input
@@ -195,15 +195,15 @@ export function LoginPage() {
 
             {(mode === 'login' || mode === 'register') && (
               <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-bold text-[#1E293B] dark:text-[#F8FAFC]">
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC]">
                     Password *
                   </label>
                   {mode === 'login' && (
                     <button
                       type="button"
                       onClick={() => { setMode('forgot'); setError('') }}
-                      className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline"
+                      className="text-xs font-medium text-[#2563EB] dark:text-[#60A5FA] hover:underline"
                     >
                       Forgot?
                     </button>
@@ -221,7 +221,7 @@ export function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-[#64748B] hover:text-[#1E293B] dark:hover:text-[#F8FAFC]"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-[#64748B] hover:text-[#1E293B] dark:hover:text-[#F8FAFC] font-medium"
                   >
                     {showPassword ? 'Hide' : 'Show'}
                   </button>
@@ -231,7 +231,7 @@ export function LoginPage() {
 
             {mode === 'register' && (
               <div>
-                <label className="block text-xs font-bold text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">
+                <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1">
                   Confirm Password *
                 </label>
                 <div className="relative">
@@ -246,7 +246,7 @@ export function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-[#64748B] hover:text-[#1E293B] dark:hover:text-[#F8FAFC]"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-[#64748B] hover:text-[#1E293B] dark:hover:text-[#F8FAFC] font-medium"
                   >
                     {showConfirmPassword ? 'Hide' : 'Show'}
                   </button>
@@ -257,7 +257,7 @@ export function LoginPage() {
             {mode === 'reset' && (
               <>
                 <div>
-                  <label className="block text-xs font-bold text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">
+                  <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1">
                     Reset Token *
                   </label>
                   <input
@@ -271,7 +271,7 @@ export function LoginPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">
+                  <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1">
                     New Password *
                   </label>
                   <input
@@ -285,7 +285,7 @@ export function LoginPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">
+                  <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1">
                     Confirm New Password *
                   </label>
                   <input
@@ -303,7 +303,7 @@ export function LoginPage() {
             <button
               type="submit"
               disabled={submitting || loading}
-              className="w-full py-3.5 rounded-2xl bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#60A5FA] text-white text-xs font-bold shadow-md shadow-blue-500/20 transition-all disabled:opacity-50 mt-2"
+              className="w-full py-3 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#60A5FA] text-white text-sm font-medium shadow-xs transition-all disabled:opacity-50 mt-2"
             >
               {submitting || loading
                 ? 'Processing...'
@@ -322,7 +322,7 @@ export function LoginPage() {
               <button
                 type="button"
                 onClick={() => { setMode('login'); setError('') }}
-                className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline"
+                className="text-sm font-medium text-[#2563EB] dark:text-[#60A5FA] hover:underline"
               >
                 ← Back to Sign In
               </button>

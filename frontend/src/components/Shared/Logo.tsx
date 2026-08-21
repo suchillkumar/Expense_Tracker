@@ -7,10 +7,10 @@ interface LogoProps {
 
 export function Logo({ className = '', size = 'md', showText = true, lightText = false }: LogoProps) {
   const sizeMap = {
-    sm: { box: 'w-7 h-7', icon: 16, text: 'text-sm font-black', sub: 'text-[9px]' },
-    md: { box: 'w-9 h-9', icon: 20, text: 'text-base font-black', sub: 'text-[10px]' },
-    lg: { box: 'w-11 h-11', icon: 24, text: 'text-lg font-black', sub: 'text-xs' },
-    xl: { box: 'w-14 h-14', icon: 30, text: 'text-2xl font-black', sub: 'text-xs' },
+    sm: { box: 'w-7 h-7', icon: 16, text: 'text-sm font-bold', sub: 'text-[11px]' },
+    md: { box: 'w-9 h-9', icon: 20, text: 'text-base font-bold', sub: 'text-[12px]' },
+    lg: { box: 'w-11 h-11', icon: 24, text: 'text-lg font-bold', sub: 'text-[13px]' },
+    xl: { box: 'w-14 h-14', icon: 30, text: 'text-2xl font-bold', sub: 'text-sm' },
   }
 
   const current = sizeMap[size]
@@ -61,15 +61,15 @@ export function Logo({ className = '', size = 'md', showText = true, lightText =
       {showText && (
         <div className="flex flex-col leading-tight min-w-0">
           <span
-            className={`tracking-tight ${current.text} ${
+            className={`${current.text} ${
               lightText
                 ? 'text-white'
-                : 'text-[#0F172A] dark:text-white'
+                : 'text-[#1E293B] dark:text-[#F8FAFC]'
             }`}
           >
             Expense Tracker
           </span>
-          <span className={`text-[#64748B] dark:text-slate-400 font-medium tracking-normal ${current.sub} mt-0.5 whitespace-nowrap`}>
+          <span className={`text-[#64748B] dark:text-[#94A3B8] font-normal ${current.sub} mt-0.5 whitespace-nowrap`}>
             Smart Expense Management
           </span>
         </div>

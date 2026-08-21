@@ -202,22 +202,22 @@ export function ReportsView() {
       {/* 1. Header & Controls (Hidden in Print) */}
       <div className="flex flex-wrap items-center justify-between gap-4 print:hidden">
         <div>
-          <h2 className="text-2xl font-black text-[#0F172A] dark:text-white tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#1E293B] dark:text-[#F8FAFC]">
             Financial Statements & Reports
           </h2>
-          <p className="text-xs text-[#64748B] dark:text-slate-400 mt-0.5">
+          <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5 font-normal">
             Audit-ready monthly summaries, yearly financial statements, CSV exports, and print documents.
           </p>
         </div>
 
         <div className="flex items-center gap-2.5 flex-wrap">
           {/* Report Type Switcher */}
-          <div className="flex items-center bg-slate-100 dark:bg-[#243244] p-1 rounded-xl gap-1 text-xs font-bold border border-[#E2E8F0] dark:border-[#334155]">
+          <div className="flex items-center bg-slate-100 dark:bg-[#243244] p-1 rounded-xl gap-1 text-sm font-medium border border-[#E2E8F0] dark:border-[#334155]">
             <button
               onClick={() => setReportType('monthly')}
               className={`px-3 py-1.5 rounded-lg transition-all ${
                 reportType === 'monthly'
-                  ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+                  ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs font-semibold'
                   : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
               }`}
             >
@@ -227,7 +227,7 @@ export function ReportsView() {
               onClick={() => setReportType('yearly')}
               className={`px-3 py-1.5 rounded-lg transition-all ${
                 reportType === 'yearly'
-                  ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+                  ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs font-semibold'
                   : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
               }`}
             >
@@ -240,7 +240,7 @@ export function ReportsView() {
             <select
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#243244] text-[#1E293B] dark:text-[#F8FAFC] rounded-xl px-3.5 py-2 text-xs font-bold focus:outline-none"
+              className="border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#243244] text-[#1E293B] dark:text-[#F8FAFC] rounded-xl px-3.5 py-2 text-sm font-medium focus:outline-none"
             >
               {availableMonths.map((m) => (
                 <option key={m} value={m}>
@@ -252,7 +252,7 @@ export function ReportsView() {
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(Number(e.target.value))}
-              className="border border-[#E2E8F0] dark:border-slate-700 bg-white dark:bg-slate-800 text-[#0F172A] dark:text-white rounded-xl px-3.5 py-2 text-xs font-bold focus:outline-none"
+              className="border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#243244] text-[#1E293B] dark:text-[#F8FAFC] rounded-xl px-3.5 py-2 text-sm font-medium focus:outline-none"
             >
               {[2026, 2025, 2024, 2023].map((y) => (
                 <option key={y} value={y}>{y} Annual</option>
@@ -262,25 +262,25 @@ export function ReportsView() {
 
           <button
             onClick={handleExportCSV}
-            className="px-3.5 py-2 rounded-xl bg-[#10B981] hover:bg-emerald-600 text-white text-xs font-bold shadow-sm shadow-emerald-500/20 transition-all flex items-center gap-1.5 active:scale-[0.98]"
+            className="px-3.5 py-2 rounded-xl bg-[#16A34A] hover:bg-[#15803D] dark:bg-[#16A34A] dark:hover:bg-[#22C55E] text-white text-sm font-medium shadow-xs transition-all flex items-center gap-1.5"
           >
             <span>📥</span> Export CSV
           </button>
 
           <button
             onClick={handlePrint}
-            className="px-3.5 py-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold shadow-sm shadow-blue-500/20 transition-all flex items-center gap-1.5 active:scale-[0.98]"
+            className="px-3.5 py-2 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#60A5FA] text-white text-sm font-medium shadow-xs transition-all flex items-center gap-1.5"
           >
             <span>🖨️</span> Print / PDF
           </button>
         </div>
       </div>
 
-      {/* ── REPORT CONTENT CONTAINER (Optimized for Screen & Print) ── */}
+      {/* ── REPORT CONTENT CONTAINER ── */}
       {loading ? (
         <div className="fintech-card p-12 text-center">
           <div className="w-8 h-8 border-3 border-blue-200 border-t-[#2563EB] rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-xs text-[#64748B]">Compiling financial audit report...</p>
+          <p className="text-sm text-[#64748B] dark:text-[#94A3B8]">Compiling financial audit report...</p>
         </div>
       ) : reportType === 'monthly' && report ? (
         <div className="space-y-6 print:space-y-4">
@@ -289,20 +289,20 @@ export function ReportsView() {
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <Logo size="sm" lightText={true} />
-                <span className="text-[10px] uppercase tracking-widest text-blue-300 font-bold">
+                <span className="text-xs text-blue-300 font-semibold">
                   Monthly Statement
                 </span>
               </div>
-              <h3 className="text-2xl sm:text-3xl font-black">
+              <h3 className="text-xl sm:text-2xl font-bold">
                 {new Date(`${selectedMonth}-01`).toLocaleDateString('default', { month: 'long', year: 'numeric' })}
               </h3>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-400 mt-1 font-normal">
                 Generated: {new Date(report.generatedAt).toLocaleDateString()}
               </p>
             </div>
             <div className="text-right">
               <p className="text-xs text-slate-400">Net Monthly Savings</p>
-              <p className="text-2xl sm:text-3xl font-black text-[#10B981] tabular-numbers">
+              <p className="text-2xl font-semibold text-[#16A34A] tabular-numbers">
                 {formatMoney(report.summary.netSavings, currency)}
               </p>
               <p className="text-xs text-slate-300">Savings Rate: {report.summary.savingsRate}%</p>
@@ -311,28 +311,28 @@ export function ReportsView() {
 
           {/* 4 Statement KPI Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="fintech-card p-5 border-t-3 border-t-[#2563EB]">
-              <p className="text-[11px] font-bold text-[#64748B] dark:text-slate-400 uppercase">Total Revenue / Inflow</p>
-              <p className="text-2xl font-black text-[#2563EB] mt-1.5 tabular-numbers">
+            <div className="fintech-card p-5 border-t-3 border-t-[#2563EB] dark:border-t-[#3B82F6]">
+              <p className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Total Revenue / Inflow</p>
+              <p className="text-2xl font-semibold text-[#2563EB] dark:text-[#3B82F6] mt-1.5 tabular-numbers">
                 {formatMoney(report.summary.totalIncome, currency)}
               </p>
             </div>
-            <div className="fintech-card p-5 border-t-3 border-t-[#EF4444]">
-              <p className="text-[11px] font-bold text-[#64748B] dark:text-slate-400 uppercase">Total Outflow / Spent</p>
-              <p className="text-2xl font-black text-[#EF4444] mt-1.5 tabular-numbers">
+            <div className="fintech-card p-5 border-t-3 border-t-[#DC2626] dark:border-t-[#F87171]">
+              <p className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Total Outflow / Spent</p>
+              <p className="text-2xl font-semibold text-[#DC2626] dark:text-[#F87171] mt-1.5 tabular-numbers">
                 {formatMoney(report.summary.totalExpense, currency)}
               </p>
             </div>
-            <div className="fintech-card p-5 border-t-3 border-t-[#10B981]">
-              <p className="text-[11px] font-bold text-[#64748B] dark:text-slate-400 uppercase">Net Monthly Savings</p>
-              <p className="text-2xl font-black text-[#10B981] mt-1.5 tabular-numbers">
+            <div className="fintech-card p-5 border-t-3 border-t-[#16A34A] dark:border-t-[#22C55E]">
+              <p className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Net Monthly Savings</p>
+              <p className="text-2xl font-semibold text-[#16A34A] dark:text-[#22C55E] mt-1.5 tabular-numbers">
                 {formatMoney(report.summary.netSavings, currency)}
               </p>
             </div>
-            <div className="fintech-card p-5 border-t-3 border-t-[#7C3AED]">
-              <p className="text-[11px] font-bold text-[#64748B] dark:text-slate-400 uppercase">Activity Count</p>
-              <p className="text-2xl font-black text-[#0F172A] dark:text-white mt-1.5 tabular-numbers">
-                {report.summary.transactionCount} entries
+            <div className="fintech-card p-5 border-t-3 border-t-[#7C3AED] dark:border-t-[#A78BFA]">
+              <p className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Savings Rate %</p>
+              <p className="text-2xl font-semibold text-[#1E293B] dark:text-[#F8FAFC] mt-1.5 tabular-numbers">
+                {report.summary.savingsRate}%
               </p>
             </div>
           </div>
@@ -349,14 +349,14 @@ export function ReportsView() {
                     <th className="py-2.5 px-4 text-right">% of Total</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#E2E8F0] dark:divide-slate-800/60">
+                  <tbody className="divide-y divide-[#E2E8F0] dark:divide-[#334155]">
                   {report.topCategories.map((c) => (
-                    <tr key={c.category} className="hover:bg-[#F8FAFC] dark:hover:bg-slate-800/30">
-                      <td className="py-2.5 px-4 font-bold text-[#0F172A] dark:text-white">{c.category}</td>
-                      <td className="py-2.5 px-4 text-right font-black tabular-numbers text-[#EF4444]">
+                    <tr key={c.category} className="hover:bg-slate-50 dark:hover:bg-[#243244]">
+                      <td className="py-2.5 px-4 font-medium text-[#1E293B] dark:text-[#F8FAFC]">{c.category}</td>
+                      <td className="py-2.5 px-4 text-right font-semibold tabular-numbers text-[#DC2626] dark:text-[#F87171]">
                         {formatMoney(c.amount, currency)}
                       </td>
-                      <td className="py-2.5 px-4 text-right font-bold text-[#64748B] tabular-numbers">{c.percentage}%</td>
+                      <td className="py-2.5 px-4 text-right font-normal text-[#64748B] dark:text-[#94A3B8] tabular-numbers">{c.percentage}%</td>
                     </tr>
                   ))}
                 </tbody>
@@ -370,18 +370,18 @@ export function ReportsView() {
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <Logo size="sm" lightText={true} />
-                <span className="text-[10px] uppercase tracking-widest text-blue-300 font-bold">
+                <span className="text-xs text-blue-300 font-semibold">
                   Annual Audit Statement
                 </span>
               </div>
-              <h3 className="text-2xl sm:text-3xl font-black">{yearlyReport.year} Financial Year</h3>
-              <p className="text-xs text-slate-400 mt-1">
+              <h3 className="text-xl sm:text-2xl font-bold">{yearlyReport.year} Financial Year</h3>
+              <p className="text-xs text-slate-400 mt-1 font-normal">
                 Audited summary covering 12 calendar months
               </p>
             </div>
             <div className="text-right">
               <p className="text-xs text-slate-400">Total Net Surplus</p>
-              <p className="text-2xl sm:text-3xl font-black text-[#10B981] tabular-numbers">
+              <p className="text-2xl font-semibold text-[#16A34A] tabular-numbers">
                 {formatMoney(yearlyReport.summary.totalAnnualSavings, currency)}
               </p>
               <p className="text-xs text-slate-300">Annual Savings Rate: {yearlyReport.summary.annualSavingsRate}%</p>
@@ -390,10 +390,10 @@ export function ReportsView() {
 
           {/* 12-Month Progression Table */}
           <div className="fintech-card p-6 space-y-4">
-            <h4 className="font-bold text-sm text-[#0F172A] dark:text-white">12-Month Financial Flow</h4>
+            <h4 className="font-semibold text-base text-[#1E293B] dark:text-[#F8FAFC]">12-Month Financial Flow</h4>
             <div className="overflow-x-auto">
-              <table className="w-full text-xs text-left">
-                <thead className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider bg-[#F8FAFC] dark:bg-slate-800/40 border-b border-[#E2E8F0] dark:border-slate-800">
+              <table className="w-full text-sm text-left">
+                <thead className="text-xs font-semibold text-[#64748B] dark:text-[#94A3B8] uppercase tracking-wider bg-slate-50 dark:bg-[#243244] border-b border-[#E2E8F0] dark:border-[#334155]">
                   <tr>
                     <th className="py-2.5 px-4">Month</th>
                     <th className="py-2.5 px-4 text-right">Income</th>
@@ -401,19 +401,19 @@ export function ReportsView() {
                     <th className="py-2.5 px-4 text-right">Surplus</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#E2E8F0] dark:divide-slate-800/60">
+                <tbody className="divide-y divide-[#E2E8F0] dark:divide-[#334155]">
                   {yearlyReport.monthlyComparison.map((m) => (
-                    <tr key={m.month} className="hover:bg-[#F8FAFC] dark:hover:bg-slate-800/30">
-                      <td className="py-2.5 px-4 font-bold text-[#0F172A] dark:text-white">
+                    <tr key={m.month} className="hover:bg-slate-50 dark:hover:bg-[#243244]">
+                      <td className="py-2.5 px-4 font-medium text-[#1E293B] dark:text-[#F8FAFC]">
                         {new Date(`${m.month}-01`).toLocaleDateString('default', { month: 'short', year: 'numeric' })}
                       </td>
-                      <td className="py-2.5 px-4 text-right font-bold text-[#2563EB] tabular-numbers">
+                      <td className="py-2.5 px-4 text-right font-semibold text-[#2563EB] dark:text-[#3B82F6] tabular-numbers">
                         {formatMoney(m.income, currency)}
                       </td>
-                      <td className="py-2.5 px-4 text-right font-bold text-[#EF4444] tabular-numbers">
+                      <td className="py-2.5 px-4 text-right font-semibold text-[#DC2626] dark:text-[#F87171] tabular-numbers">
                         {formatMoney(m.expense, currency)}
                       </td>
-                      <td className="py-2.5 px-4 text-right font-black text-[#10B981] tabular-numbers">
+                      <td className="py-2.5 px-4 text-right font-semibold text-[#16A34A] dark:text-[#22C55E] tabular-numbers">
                         {formatMoney(m.savings, currency)}
                       </td>
                     </tr>

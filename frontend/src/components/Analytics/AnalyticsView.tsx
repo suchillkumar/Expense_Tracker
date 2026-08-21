@@ -151,16 +151,16 @@ export function AnalyticsView() {
       {/* 1. Header & Time Filter */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-black text-[#0F172A] dark:text-white tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#1E293B] dark:text-[#F8FAFC]">
             Financial Analytics
           </h2>
-          <p className="text-xs text-[#64748B] dark:text-slate-400 mt-0.5">
+          <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5 font-normal">
             Deep dive into your cash flows, category spending velocity, and savings progress.
           </p>
         </div>
 
         {/* Filters */}
-        <div className="flex items-center flex-wrap bg-[#F8FAFC] dark:bg-slate-800 p-1.5 rounded-xl gap-1 border border-[#E2E8F0] dark:border-slate-700">
+        <div className="flex items-center flex-wrap bg-slate-100 dark:bg-[#243244] p-1.5 rounded-xl gap-1 border border-[#E2E8F0] dark:border-[#334155]">
           {[
             { key: 'this_month', label: 'This Month' },
             { key: 'last_month', label: 'Last Month' },
@@ -172,9 +172,9 @@ export function AnalyticsView() {
             <button
               key={f.key}
               onClick={() => setTimeFilter(f.key as TimeFilter)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
                 timeFilter === f.key
-                  ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+                  ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs font-semibold'
                   : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
               }`}
             >
@@ -187,61 +187,61 @@ export function AnalyticsView() {
       {/* Custom Date Pickers */}
       {timeFilter === 'custom' && (
         <div className="fintech-card p-4 flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#64748B] dark:text-[#94A3B8]">
+          <div className="flex items-center gap-2 text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">
             <span>From:</span>
             <input
               type="date"
               value={customFrom}
               onChange={(e) => setCustomFrom(e.target.value)}
-              className="px-3 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] text-xs bg-white dark:bg-[#243244] text-[#1E293B] dark:text-[#F8FAFC]"
+              className="px-3 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] text-sm bg-white dark:bg-[#243244] text-[#1E293B] dark:text-[#F8FAFC] font-normal"
             />
           </div>
-          <div className="flex items-center gap-2 text-xs font-bold text-[#64748B] dark:text-[#94A3B8]">
+          <div className="flex items-center gap-2 text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">
             <span>To:</span>
             <input
               type="date"
               value={customTo}
               onChange={(e) => setCustomTo(e.target.value)}
-              className="px-3 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] text-xs bg-white dark:bg-[#243244] text-[#1E293B] dark:text-[#F8FAFC]"
+              className="px-3 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] text-sm bg-white dark:bg-[#243244] text-[#1E293B] dark:text-[#F8FAFC] font-normal"
             />
           </div>
         </div>
       )}
 
       {/* 2. Executive Analytics Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-        <div className="fintech-card p-5 border-t-3 border-t-[#2563EB]">
-          <p className="text-[11px] font-bold text-[#64748B] dark:text-slate-400 uppercase tracking-wider">Total Income</p>
-          <p className="text-2xl font-black text-[#2563EB] mt-1.5 tabular-numbers">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="fintech-card p-5 border-t-3 border-t-[#2563EB] dark:border-t-[#3B82F6]">
+          <p className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Total Income</p>
+          <p className="text-2xl font-semibold text-[#2563EB] dark:text-[#3B82F6] mt-1.5 tabular-numbers">
             {formatMoney(totalIncome, currency)}
           </p>
-          <p className="text-[11px] text-[#64748B] dark:text-slate-400 mt-1">Inflow across period</p>
+          <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-1 font-normal">Inflow across period</p>
         </div>
 
-        <div className="fintech-card p-5 border-t-3 border-t-[#EF4444]">
-          <p className="text-[11px] font-bold text-[#64748B] dark:text-slate-400 uppercase tracking-wider">Total Expenses</p>
-          <p className="text-2xl font-black text-[#EF4444] mt-1.5 tabular-numbers">
+        <div className="fintech-card p-5 border-t-3 border-t-[#DC2626] dark:border-t-[#F87171]">
+          <p className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Total Expenses</p>
+          <p className="text-2xl font-semibold text-[#DC2626] dark:text-[#F87171] mt-1.5 tabular-numbers">
             {formatMoney(totalExpense, currency)}
           </p>
-          <p className="text-[11px] text-[#64748B] dark:text-slate-400 mt-1">Outflow across period</p>
+          <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-1 font-normal">Outflow across period</p>
         </div>
 
-        <div className="fintech-card p-5 border-t-3 border-t-[#10B981]">
-          <p className="text-[11px] font-bold text-[#64748B] dark:text-slate-400 uppercase tracking-wider">Net Savings</p>
-          <p className="text-2xl font-black text-[#10B981] mt-1.5 tabular-numbers">
+        <div className="fintech-card p-5 border-t-3 border-t-[#16A34A] dark:border-t-[#22C55E]">
+          <p className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Net Savings</p>
+          <p className="text-2xl font-semibold text-[#16A34A] dark:text-[#22C55E] mt-1.5 tabular-numbers">
             {formatMoney(netSavings, currency)}
           </p>
-          <p className="text-[11px] text-[#10B981] font-bold mt-1">
+          <p className="text-xs text-[#16A34A] dark:text-[#22C55E] font-medium mt-1">
             Savings Rate: {savingsRate}%
           </p>
         </div>
 
-        <div className="fintech-card p-5 border-t-3 border-t-[#7C3AED]">
-          <p className="text-[11px] font-bold text-[#64748B] dark:text-slate-400 uppercase tracking-wider">Avg Spend / Transaction</p>
-          <p className="text-2xl font-black text-[#0F172A] dark:text-white mt-1.5 tabular-numbers">
+        <div className="fintech-card p-5 border-t-3 border-t-[#7C3AED] dark:border-t-[#A78BFA]">
+          <p className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Avg Spend / Transaction</p>
+          <p className="text-2xl font-semibold text-[#1E293B] dark:text-[#F8FAFC] mt-1.5 tabular-numbers">
             {formatMoney(avgExpensePerTx, currency)}
           </p>
-          <p className="text-[11px] text-[#64748B] dark:text-slate-400 mt-1">{filteredTxs.length} Total records</p>
+          <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-1 font-normal">{filteredTxs.length} Total records</p>
         </div>
       </div>
 

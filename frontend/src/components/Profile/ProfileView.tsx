@@ -130,23 +130,23 @@ export function ProfileView() {
   return (
     <div className="space-y-6 animate-fade-in pb-12 max-w-5xl mx-auto">
       {/* 1. Header Profile Banner */}
-      <div className="fintech-card bg-gradient-to-r from-blue-50/50 via-white to-purple-50/50 dark:from-slate-900 dark:via-[#0F172A] dark:to-slate-900 p-6 sm:p-8 flex flex-wrap items-center justify-between gap-6 border border-[#E2E8F0] dark:border-slate-800">
+      <div className="fintech-card p-6 sm:p-8 flex flex-wrap items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#2563EB] to-[#7C3AED] text-white flex items-center justify-center text-3xl shadow-md shadow-blue-500/20 shrink-0">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#2563EB] to-[#7C3AED] text-white flex items-center justify-center text-2xl shadow-md shadow-blue-500/20 shrink-0 font-bold">
             {avatarUrl || initials(user?.name || 'User')}
           </div>
           <div>
-            <h2 className="text-xl sm:text-2xl font-black text-[#0F172A] dark:text-white tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-bold text-[#1E293B] dark:text-[#F8FAFC]">
               {user?.name || 'Member'}
             </h2>
-            <p className="text-xs text-[#64748B] dark:text-slate-400 mt-0.5">
+            <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5 font-normal">
               {user?.email} • {user?.occupation || 'Finance Enthusiast'}
             </p>
             <div className="flex items-center gap-2 mt-2">
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-100 dark:bg-blue-950 text-[#2563EB] dark:text-blue-300">
-                Expense Tracker Verified
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-950/60 text-[#2563EB] dark:text-[#60A5FA]">
+                Verified Account
               </span>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-950 text-[#10B981] dark:text-emerald-300">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 dark:bg-green-950/60 text-[#16A34A] dark:text-[#22C55E]">
                 {user?.preferredCurrency || 'INR'}
               </span>
             </div>
@@ -155,7 +155,7 @@ export function ProfileView() {
 
         <button
           onClick={logout}
-          className="px-4 py-2 rounded-xl bg-red-50 dark:bg-red-950/40 text-[#EF4444] hover:bg-red-100 text-xs font-bold transition-all"
+          className="px-4 py-2 rounded-xl bg-red-50 dark:bg-red-950/40 text-[#DC2626] dark:text-[#F87171] hover:bg-red-100 text-sm font-medium transition-all"
         >
           Sign Out
         </button>
@@ -165,9 +165,9 @@ export function ProfileView() {
       <div className="flex items-center bg-slate-100 dark:bg-[#243244] p-1.5 rounded-xl gap-1 max-w-xl border border-[#E2E8F0] dark:border-[#334155]">
         <button
           onClick={() => setTab('personal')}
-          className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
+          className={`flex-1 py-1.5 rounded-lg text-sm font-medium transition-all ${
             tab === 'personal'
-              ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+              ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs font-semibold'
               : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
           }`}
         >
@@ -175,9 +175,9 @@ export function ProfileView() {
         </button>
         <button
           onClick={() => setTab('financial')}
-          className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
+          className={`flex-1 py-1.5 rounded-lg text-sm font-medium transition-all ${
             tab === 'financial'
-              ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+              ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs font-semibold'
               : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
           }`}
         >
@@ -185,9 +185,9 @@ export function ProfileView() {
         </button>
         <button
           onClick={() => setTab('theme')}
-          className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
+          className={`flex-1 py-1.5 rounded-lg text-sm font-medium transition-all ${
             tab === 'theme'
-              ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+              ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs font-semibold'
               : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
           }`}
         >
@@ -195,9 +195,9 @@ export function ProfileView() {
         </button>
         <button
           onClick={() => setTab('security')}
-          className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
+          className={`flex-1 py-1.5 rounded-lg text-sm font-medium transition-all ${
             tab === 'security'
-              ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+              ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs font-semibold'
               : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
           }`}
         >
@@ -410,14 +410,14 @@ export function ProfileView() {
               <div className="flex items-center justify-between">
                 <span className="text-2xl">☀️</span>
                 {theme === 'light' && (
-                  <span className="w-5 h-5 rounded-full bg-[#2563EB] text-white flex items-center justify-center text-[10px] font-black">
+                  <span className="w-5 h-5 rounded-full bg-[#2563EB] text-white flex items-center justify-center text-[10px] font-bold">
                     ✓
                   </span>
                 )}
               </div>
               <div>
-                <h4 className="text-sm font-bold text-[#1E293B] dark:text-[#F8FAFC]">Light Theme</h4>
-                <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-0.5">
+                <h4 className="text-sm font-semibold text-[#1E293B] dark:text-[#F8FAFC]">Light Theme</h4>
+                <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-0.5 font-normal">
                   Soft, comfortable slate & white aesthetic.
                 </p>
               </div>
@@ -439,14 +439,14 @@ export function ProfileView() {
               <div className="flex items-center justify-between">
                 <span className="text-2xl">🌙</span>
                 {theme === 'dark' && (
-                  <span className="w-5 h-5 rounded-full bg-[#2563EB] text-white flex items-center justify-center text-[10px] font-black">
+                  <span className="w-5 h-5 rounded-full bg-[#2563EB] text-white flex items-center justify-center text-[10px] font-bold">
                     ✓
                   </span>
                 )}
               </div>
               <div>
-                <h4 className="text-sm font-bold text-[#1E293B] dark:text-[#F8FAFC]">Dark Theme</h4>
-                <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-0.5">
+                <h4 className="text-sm font-semibold text-[#1E293B] dark:text-[#F8FAFC]">Dark Theme</h4>
+                <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-0.5 font-normal">
                   Comfortable deep slate tone easy on the eyes and high contrast.
                 </p>
               </div>
@@ -468,14 +468,14 @@ export function ProfileView() {
               <div className="flex items-center justify-between">
                 <span className="text-2xl">💻</span>
                 {theme === 'system' && (
-                  <span className="w-5 h-5 rounded-full bg-[#2563EB] text-white flex items-center justify-center text-[10px] font-black">
+                  <span className="w-5 h-5 rounded-full bg-[#2563EB] text-white flex items-center justify-center text-[10px] font-bold">
                     ✓
                   </span>
                 )}
               </div>
               <div>
-                <h4 className="text-sm font-bold text-[#1E293B] dark:text-[#F8FAFC]">System Default</h4>
-                <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-0.5">
+                <h4 className="text-sm font-semibold text-[#1E293B] dark:text-[#F8FAFC]">System Default</h4>
+                <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-0.5 font-normal">
                   Automatically sync with your operating system preferences.
                 </p>
               </div>

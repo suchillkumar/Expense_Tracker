@@ -76,24 +76,24 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
             >
               <span className="text-base">🔔</span>
               {unreadNotificationCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-[#DC2626] dark:bg-[#F87171] text-[9px] font-black text-white flex items-center justify-center animate-pulse">
+                <span className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-[#DC2626] dark:bg-[#F87171] text-[10px] font-bold text-white flex items-center justify-center animate-pulse">
                   {unreadNotificationCount}
                 </span>
               )}
             </button>
 
             {notifPanelOpen && (
-              <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-[#1E293B] rounded-2xl shadow-2xl border border-[#E2E8F0] dark:border-[#334155] py-3 z-50 animate-fade-in">
+              <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-[#1E293B] rounded-2xl shadow-xl border border-[#E2E8F0] dark:border-[#334155] py-3 z-50 animate-fade-in">
                 <div className="flex items-center justify-between px-4 pb-2 border-b border-[#E2E8F0] dark:border-[#334155]">
-                  <h4 className="text-xs font-bold text-[#1E293B] dark:text-[#F8FAFC] flex items-center gap-1.5">
+                  <h4 className="text-xs font-semibold text-[#1E293B] dark:text-[#F8FAFC] flex items-center gap-1.5">
                     <span>Notifications</span>
-                    <span className="text-[10px] bg-blue-50 dark:bg-blue-950/60 text-[#2563EB] dark:text-[#60A5FA] px-1.5 py-0.5 rounded-full font-bold">
+                    <span className="text-[11px] bg-blue-50 dark:bg-blue-950/60 text-[#2563EB] dark:text-[#60A5FA] px-1.5 py-0.5 rounded-full font-medium">
                       {notifications.length}
                     </span>
                   </h4>
                   <button
                     onClick={() => setNotifPanelOpen(false)}
-                    className="text-[11px] text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-white"
+                    className="text-xs text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-white"
                   >
                     ✕
                   </button>
@@ -119,8 +119,8 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
                           <p className="text-xs font-semibold text-[#1E293B] dark:text-[#F8FAFC] leading-snug">
                             {n.title || n.message}
                           </p>
-                          {n.title && <p className="text-[11px] text-[#64748B] dark:text-[#94A3B8] mt-0.5">{n.message}</p>}
-                          <span className="text-[9px] text-[#64748B] dark:text-[#94A3B8] mt-1 block">
+                          {n.title && <p className="text-[12px] text-[#64748B] dark:text-[#94A3B8] mt-0.5">{n.message}</p>}
+                          <span className="text-[11px] text-[#64748B] dark:text-[#94A3B8] mt-1 block">
                             {new Date(n.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </span>
                         </div>
@@ -135,11 +135,11 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
           {/* Dark / Light Mode Toggle Pill */}
           <button
             onClick={toggleTheme}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-slate-100 hover:bg-slate-200 dark:bg-[#1E293B] dark:hover:bg-[#334155] text-[#1E293B] dark:text-[#F8FAFC] shadow-xs transition-all text-xs font-bold"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-slate-100 hover:bg-slate-200 dark:bg-[#1E293B] dark:hover:bg-[#334155] text-[#1E293B] dark:text-[#F8FAFC] shadow-xs transition-all text-xs font-medium"
             title={isDark ? 'Switch to Light theme' : 'Switch to Dark theme'}
           >
             <span className="text-sm">{isDark ? '☀️' : '🌙'}</span>
-            <span className="hidden sm:inline text-[11px] font-semibold">{isDark ? 'Light' : 'Dark'}</span>
+            <span className="hidden sm:inline text-xs font-medium">{isDark ? 'Light' : 'Dark'}</span>
           </button>
 
           {/* User Profile Pill */}
@@ -147,14 +147,14 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
             onClick={() => onNavigate('profile')}
             className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-[#1E293B] transition-colors border border-[#E2E8F0] dark:border-[#334155] text-left"
           >
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-[#2563EB] to-[#7C3AED] text-white flex items-center justify-center text-xs font-black shadow-xs">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-[#2563EB] to-[#7C3AED] text-white flex items-center justify-center text-xs font-bold shadow-xs">
               {user?.name ? user.name[0].toUpperCase() : 'U'}
             </div>
             <div className="hidden sm:block leading-none">
-              <p className="text-xs font-bold text-[#1E293B] dark:text-[#F8FAFC] truncate max-w-[100px]">
+              <p className="text-xs font-semibold text-[#1E293B] dark:text-[#F8FAFC] truncate max-w-[100px]">
                 {user?.name || 'My Account'}
               </p>
-              <p className="text-[10px] text-[#64748B] dark:text-[#94A3B8] mt-0.5">
+              <p className="text-[11px] text-[#64748B] dark:text-[#94A3B8] mt-0.5">
                 {user?.preferredCurrency || 'INR'}
               </p>
             </div>
@@ -177,9 +177,9 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
                 <button
                   key={item.key}
                   onClick={() => handleNavClick(item.key)}
-                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                     isActive
-                      ? 'bg-blue-50 text-[#2563EB] dark:bg-blue-950/50 dark:text-[#60A5FA] font-bold shadow-xs border-l-3 border-[#2563EB] dark:border-[#3B82F6]'
+                      ? 'bg-blue-50 text-[#2563EB] dark:bg-blue-950/50 dark:text-[#60A5FA] font-semibold shadow-xs border-l-3 border-[#2563EB] dark:border-[#3B82F6]'
                       : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC] hover:bg-slate-50 dark:hover:bg-[#1E293B]'
                   }`}
                 >
@@ -194,7 +194,7 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
           <div className="space-y-1 pt-3 border-t border-[#E2E8F0] dark:border-[#334155]">
             <button
               onClick={() => setCollapsed(!collapsed)}
-              className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs text-[#64748B] dark:text-[#94A3B8] hover:bg-slate-100 dark:hover:bg-[#1E293B] transition-colors"
+              className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-medium text-[#64748B] dark:text-[#94A3B8] hover:bg-slate-100 dark:hover:bg-[#1E293B] transition-colors"
               title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
               <span className="text-sm">{collapsed ? '→' : '←'}</span>
@@ -203,7 +203,7 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
 
             <button
               onClick={() => setLogoutModalOpen(true)}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#DC2626] dark:text-[#F87171] hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-[#DC2626] dark:text-[#F87171] hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
             >
               <span className="text-base shrink-0">🚪</span>
               {!collapsed && <span>Sign Out</span>}
@@ -239,9 +239,9 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
                       <button
                         key={item.key}
                         onClick={() => handleNavClick(item.key)}
-                        className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                        className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                           isActive
-                            ? 'bg-blue-50 text-[#2563EB] dark:bg-blue-950/50 dark:text-[#60A5FA] font-bold'
+                            ? 'bg-blue-50 text-[#2563EB] dark:bg-blue-950/50 dark:text-[#60A5FA] font-semibold'
                             : 'text-[#64748B] dark:text-[#94A3B8] hover:bg-slate-50 dark:hover:bg-[#1E293B]'
                         }`}
                       >
@@ -259,7 +259,7 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
                     setMobileOpen(false)
                     setLogoutModalOpen(true)
                   }}
-                  className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[#DC2626] dark:text-[#F87171] hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+                  className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-[#DC2626] dark:text-[#F87171] hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
                 >
                   <span className="text-base">🚪</span>
                   <span>Sign Out</span>
@@ -285,12 +285,12 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
               onClick={() => handleNavClick(item.key)}
               className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
                 isActive
-                  ? 'text-[#2563EB] dark:text-[#60A5FA] font-bold'
+                  ? 'text-[#2563EB] dark:text-[#60A5FA] font-semibold'
                   : 'text-[#64748B] dark:text-[#94A3B8] hover:text-[#1E293B]'
               }`}
             >
               <span className="text-base">{item.icon}</span>
-              <span className="text-[10px] mt-0.5">{item.label}</span>
+              <span className="text-[11px] font-medium mt-0.5">{item.label}</span>
             </button>
           )
         })}
@@ -303,14 +303,14 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
             <div className="w-12 h-12 rounded-2xl bg-red-50 dark:bg-red-950/50 text-[#DC2626] dark:text-[#F87171] flex items-center justify-center text-xl mb-4">
               🚪
             </div>
-            <h3 className="text-base font-bold text-[#1E293B] dark:text-[#F8FAFC]">Sign Out of Expense Tracker?</h3>
-            <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-1.5 leading-relaxed">
+            <h3 className="text-base font-semibold text-[#1E293B] dark:text-[#F8FAFC]">Sign Out of Expense Tracker?</h3>
+            <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mt-1.5 leading-relaxed font-normal">
               Your financial session will be safely closed. You can sign back in at any time.
             </p>
             <div className="grid grid-cols-2 gap-2.5 mt-6">
               <button
                 onClick={() => setLogoutModalOpen(false)}
-                className="py-2.5 px-4 rounded-xl border border-[#E2E8F0] dark:border-[#334155] text-xs font-bold text-[#64748B] dark:text-[#94A3B8] hover:bg-slate-100 dark:hover:bg-[#243244] transition-colors"
+                className="py-2.5 px-4 rounded-xl border border-[#E2E8F0] dark:border-[#334155] text-sm font-medium text-[#64748B] dark:text-[#94A3B8] hover:bg-slate-100 dark:hover:bg-[#243244] transition-colors"
               >
                 Cancel
               </button>
@@ -319,7 +319,7 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
                   setLogoutModalOpen(false)
                   logout()
                 }}
-                className="py-2.5 px-4 rounded-xl bg-[#DC2626] hover:bg-red-700 text-white text-xs font-bold shadow-md shadow-red-500/20 transition-all"
+                className="py-2.5 px-4 rounded-xl bg-[#DC2626] hover:bg-red-700 text-white text-sm font-medium shadow-md shadow-red-500/20 transition-all"
               >
                 Sign Out
               </button>

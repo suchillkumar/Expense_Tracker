@@ -153,14 +153,14 @@ export function AIAssistantView() {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#2563EB] to-[#7C3AED] flex items-center justify-center text-white text-xl shadow-md shadow-blue-500/20">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#2563EB] to-[#7C3AED] flex items-center justify-center text-white text-lg shadow-md shadow-blue-500/20">
             ✨
           </div>
           <div>
-            <h2 className="text-2xl font-black text-[#0F172A] dark:text-white tracking-tight">
-              Expense Tracker AI Assistant
+            <h2 className="text-xl sm:text-2xl font-bold text-[#1E293B] dark:text-[#F8FAFC]">
+              AI Financial Assistant
             </h2>
-            <p className="text-xs text-[#64748B] dark:text-slate-400 mt-0.5">
+            <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5 font-normal">
               Financial intelligence, spending anomaly checks, expense forecasting & savings optimizer.
             </p>
           </div>
@@ -170,9 +170,9 @@ export function AIAssistantView() {
         <div className="flex items-center bg-slate-100 dark:bg-[#243244] p-1.5 rounded-xl gap-1 border border-[#E2E8F0] dark:border-[#334155]">
           <button
             onClick={() => setActiveTab('chat')}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all ${
               activeTab === 'chat'
-                ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+                ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs font-semibold'
                 : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
             }`}
           >
@@ -180,9 +180,9 @@ export function AIAssistantView() {
           </button>
           <button
             onClick={() => setActiveTab('analysis')}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all ${
               activeTab === 'analysis'
-                ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+                ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs font-semibold'
                 : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
             }`}
           >
@@ -190,9 +190,9 @@ export function AIAssistantView() {
           </button>
           <button
             onClick={() => setActiveTab('predictions')}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all ${
               activeTab === 'predictions'
-                ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+                ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs font-semibold'
                 : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
             }`}
           >
@@ -200,9 +200,9 @@ export function AIAssistantView() {
           </button>
           <button
             onClick={() => setActiveTab('savings')}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all ${
               activeTab === 'savings'
-                ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+                ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs font-semibold'
                 : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
             }`}
           >
@@ -317,62 +317,63 @@ export function AIAssistantView() {
       )}
 
       {/* ── TAB 2: SPENDING PATTERN ANALYSIS ── */}
+      {/* ── TAB 2: SPENDING ANALYSIS ── */}
       {activeTab === 'analysis' && (
         <div className="space-y-6">
-          <div className="fintech-card bg-gradient-to-r from-blue-50/50 via-white to-purple-50/50 dark:from-slate-900 dark:via-[#0F172A] dark:to-slate-900 p-6 flex flex-wrap items-center justify-between gap-4">
+          <div className="fintech-card p-6 flex flex-wrap items-center justify-between gap-4">
             <div>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-100 dark:bg-blue-950 text-[#2563EB] dark:text-blue-300">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-[#2563EB] dark:bg-blue-950/60 dark:text-[#60A5FA]">
                 🔍 Spending Intelligence
               </span>
-              <h3 className="text-xl font-black text-[#0F172A] dark:text-white mt-1">
+              <h3 className="text-xl font-bold text-[#1E293B] dark:text-[#F8FAFC] mt-1">
                 Automated Pattern & Anomaly Detection
               </h3>
-              <p className="text-xs text-[#64748B] dark:text-slate-400 mt-0.5">
+              <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5 font-normal">
                 AI analyzes your transaction frequency, top categories, and unusual spending spikes.
               </p>
             </div>
             <button
               onClick={loadSpendingAnalysis}
               disabled={analysisLoading}
-              className="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-[#E2E8F0] dark:border-slate-700 text-xs font-bold text-[#0F172A] dark:text-white shadow-xs hover:bg-[#F8FAFC]"
+              className="px-4 py-2 rounded-xl bg-white dark:bg-[#243244] border border-[#E2E8F0] dark:border-[#334155] text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] shadow-xs hover:bg-slate-50"
             >
               {analysisLoading ? 'Analyzing...' : '🔄 Refresh Analysis'}
             </button>
           </div>
 
           {analysisLoading ? (
-            <div className="py-20 text-center text-xs text-[#64748B]">
+            <div className="py-20 text-center text-sm text-[#64748B] dark:text-[#94A3B8]">
               <span className="text-2xl block mb-2">⚙️</span>
               Scanning transaction history for anomalies...
             </div>
           ) : analysis ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              <div className="fintech-card p-5 space-y-2 border-t-3 border-t-[#2563EB]">
-                <p className="text-[11px] font-bold text-[#64748B] uppercase">Top Expense Driver</p>
-                <p className="text-xl font-black text-[#0F172A] dark:text-white">
+              <div className="fintech-card p-5 space-y-2 border-t-3 border-t-[#2563EB] dark:border-t-[#3B82F6]">
+                <p className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Top Expense Driver</p>
+                <p className="text-xl font-semibold text-[#1E293B] dark:text-[#F8FAFC]">
                   {analysis.highestSpendingCategory?.category || 'N/A'}
                 </p>
-                <p className="text-xs text-[#64748B] dark:text-slate-400">
+                <p className="text-xs text-[#64748B] dark:text-[#94A3B8] font-normal">
                   {formatMoney(analysis.highestSpendingCategory?.currentAmount || 0, currency)} spent ({analysis.highestSpendingCategory?.shareOfTotal || 0}% of outflow)
                 </p>
               </div>
 
-              <div className="fintech-card p-5 space-y-2 border-t-3 border-t-[#EF4444]">
-                <p className="text-[11px] font-bold text-[#64748B] uppercase">Cycle Variance</p>
-                <p className="text-xl font-black text-[#EF4444]">
+              <div className="fintech-card p-5 space-y-2 border-t-3 border-t-[#DC2626] dark:border-t-[#F87171]">
+                <p className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Cycle Variance</p>
+                <p className="text-xl font-semibold text-[#DC2626] dark:text-[#F87171]">
                   {analysis.overallChangePct >= 0 ? `+${analysis.overallChangePct}%` : `${analysis.overallChangePct}%`}
                 </p>
-                <p className="text-xs text-[#64748B] dark:text-slate-400">
+                <p className="text-xs text-[#64748B] dark:text-[#94A3B8] font-normal">
                   Change in total expenditure vs previous cycle
                 </p>
               </div>
 
-              <div className="fintech-card p-5 space-y-2 border-t-3 border-t-[#10B981]">
-                <p className="text-[11px] font-bold text-[#64748B] uppercase">Weekend vs Weekday</p>
-                <p className="text-xl font-black text-[#10B981]">
+              <div className="fintech-card p-5 space-y-2 border-t-3 border-t-[#16A34A] dark:border-t-[#22C55E]">
+                <p className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Weekend vs Weekday</p>
+                <p className="text-xl font-semibold text-[#16A34A] dark:text-[#22C55E]">
                   {analysis.weekendVsWeekday?.weekendPercentage || 0}% Weekend
                 </p>
-                <p className="text-xs text-[#64748B] dark:text-slate-400">
+                <p className="text-xs text-[#64748B] dark:text-[#94A3B8] font-normal">
                   Weekend volume vs weekday expenditure
                 </p>
               </div>
@@ -384,60 +385,60 @@ export function AIAssistantView() {
       {/* ── TAB 3: PREDICTIONS ── */}
       {activeTab === 'predictions' && (
         <div className="space-y-6">
-          <div className="fintech-card bg-gradient-to-r from-blue-50/50 via-white to-purple-50/50 dark:from-slate-900 dark:via-[#0F172A] dark:to-slate-900 p-6 flex flex-wrap items-center justify-between gap-4">
+          <div className="fintech-card p-6 flex flex-wrap items-center justify-between gap-4">
             <div>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-100 dark:bg-purple-950 text-[#7C3AED] dark:text-purple-300">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-[#7C3AED] dark:bg-purple-950/60 dark:text-[#A78BFA]">
                 🔮 Outflow Forecasting
               </span>
-              <h3 className="text-xl font-black text-[#0F172A] dark:text-white mt-1">
+              <h3 className="text-xl font-bold text-[#1E293B] dark:text-[#F8FAFC] mt-1">
                 Next Month Expense Projection
               </h3>
-              <p className="text-xs text-[#64748B] dark:text-slate-400 mt-0.5">
+              <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5 font-normal">
                 Machine-learning linear models forecasting your expected commitments next month.
               </p>
             </div>
             <button
               onClick={loadPredictions}
               disabled={predictionLoading}
-              className="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-[#E2E8F0] dark:border-slate-700 text-xs font-bold text-[#0F172A] dark:text-white shadow-xs hover:bg-[#F8FAFC]"
+              className="px-4 py-2 rounded-xl bg-white dark:bg-[#243244] border border-[#E2E8F0] dark:border-[#334155] text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] shadow-xs hover:bg-slate-50"
             >
               {predictionLoading ? 'Calculating...' : '🔄 Recalculate'}
             </button>
           </div>
 
           {predictionLoading ? (
-            <div className="py-20 text-center text-xs text-[#64748B]">
+            <div className="py-20 text-center text-sm text-[#64748B] dark:text-[#94A3B8]">
               <span className="text-2xl block mb-2">🔮</span>
               Generating financial projections...
             </div>
           ) : predictions ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              <div className="fintech-card p-6 space-y-2 border-t-3 border-t-[#2563EB]">
-                <p className="text-[11px] font-bold text-[#64748B] uppercase">Projected Outflow</p>
-                <p className="text-2xl font-black text-[#2563EB] tabular-numbers">
+              <div className="fintech-card p-6 space-y-2 border-t-3 border-t-[#2563EB] dark:border-t-[#3B82F6]">
+                <p className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Projected Outflow</p>
+                <p className="text-2xl font-semibold text-[#2563EB] dark:text-[#3B82F6] tabular-numbers">
                   {formatMoney(predictions.monthlyPredictions?.[0]?.expectedExpense || 0, currency)}
                 </p>
-                <p className="text-xs text-[#64748B] dark:text-slate-400">
+                <p className="text-xs text-[#64748B] dark:text-[#94A3B8] font-normal">
                   Confidence Score: {predictions.confidenceScore || 75}%
                 </p>
               </div>
 
-              <div className="fintech-card p-6 space-y-2 border-t-3 border-t-[#EF4444]">
-                <p className="text-[11px] font-bold text-[#64748B] uppercase">Expected Overruns</p>
-                <p className="text-2xl font-black text-[#EF4444]">
+              <div className="fintech-card p-6 space-y-2 border-t-3 border-t-[#DC2626] dark:border-t-[#F87171]">
+                <p className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Expected Overruns</p>
+                <p className="text-2xl font-semibold text-[#DC2626] dark:text-[#F87171]">
                   {predictions.potentialOverruns?.length || 0} Categories
                 </p>
-                <p className="text-xs text-[#64748B] dark:text-slate-400">
+                <p className="text-xs text-[#64748B] dark:text-[#94A3B8] font-normal">
                   {predictions.potentialOverruns?.map(p => p.category).join(', ') || 'No budget overruns forecasted'}
                 </p>
               </div>
 
-              <div className="fintech-card p-6 space-y-2 border-t-3 border-t-[#10B981]">
-                <p className="text-[11px] font-bold text-[#64748B] uppercase">Safe Monthly Surplus</p>
-                <p className="text-2xl font-black text-[#10B981] tabular-numbers">
+              <div className="fintech-card p-6 space-y-2 border-t-3 border-t-[#16A34A] dark:border-t-[#22C55E]">
+                <p className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Safe Monthly Surplus</p>
+                <p className="text-2xl font-semibold text-[#16A34A] dark:text-[#22C55E] tabular-numbers">
                   {formatMoney(predictions.monthlyPredictions?.[0]?.expectedSavings || 0, currency)}
                 </p>
-                <p className="text-xs text-[#64748B] dark:text-slate-400">
+                <p className="text-xs text-[#64748B] dark:text-[#94A3B8] font-normal">
                   Estimated buffer remaining after essential commitments
                 </p>
               </div>
@@ -449,43 +450,43 @@ export function AIAssistantView() {
       {/* ── TAB 4: SAVINGS TIPS ── */}
       {activeTab === 'savings' && (
         <div className="space-y-6">
-          <div className="fintech-card bg-gradient-to-r from-emerald-50/50 via-white to-blue-50/50 dark:from-slate-900 dark:via-[#0F172A] dark:to-slate-900 p-6 flex flex-wrap items-center justify-between gap-4">
+          <div className="fintech-card p-6 flex flex-wrap items-center justify-between gap-4">
             <div>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950 text-[#10B981] dark:text-emerald-300">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-[#16A34A] dark:bg-green-950/60 dark:text-[#22C55E]">
                 💡 Cost-Cutting Opportunities
               </span>
-              <h3 className="text-xl font-black text-[#0F172A] dark:text-white mt-1">
+              <h3 className="text-xl font-bold text-[#1E293B] dark:text-[#F8FAFC] mt-1">
                 Personalized Wealth Optimization
               </h3>
-              <p className="text-xs text-[#64748B] dark:text-slate-400 mt-0.5">
+              <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5 font-normal">
                 Actionable suggestions to eliminate financial leaks and boost your savings rate.
               </p>
             </div>
             <button
               onClick={loadSavingsRecommendations}
               disabled={savingsLoading}
-              className="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-[#E2E8F0] dark:border-slate-700 text-xs font-bold text-[#0F172A] dark:text-white shadow-xs hover:bg-[#F8FAFC]"
+              className="px-4 py-2 rounded-xl bg-white dark:bg-[#243244] border border-[#E2E8F0] dark:border-[#334155] text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] shadow-xs hover:bg-slate-50"
             >
               {savingsLoading ? 'Scanning...' : '🔄 Scan for Savings'}
             </button>
           </div>
 
           {savingsLoading ? (
-            <div className="py-20 text-center text-xs text-[#64748B]">
+            <div className="py-20 text-center text-sm text-[#64748B] dark:text-[#94A3B8]">
               <span className="text-2xl block mb-2">💡</span>
               Finding savings opportunities...
             </div>
           ) : savingsTips ? (
             <div className="space-y-4">
-              <div className="fintech-card p-5 bg-emerald-50/30 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/40">
+              <div className="fintech-card p-5 bg-green-50/30 dark:bg-green-950/20 border-green-200 dark:border-green-900/40">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="font-bold text-[#0F172A] dark:text-white text-sm">Potential Monthly Savings</h4>
-                    <p className="text-xs text-[#64748B] dark:text-slate-400 mt-0.5">
+                    <h4 className="font-semibold text-[#1E293B] dark:text-[#F8FAFC] text-sm">Potential Monthly Savings</h4>
+                    <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-0.5 font-normal">
                       Achievable without impacting essential lifestyle standards
                     </p>
                   </div>
-                  <span className="text-2xl font-black text-[#10B981] tabular-numbers">
+                  <span className="text-2xl font-semibold text-[#16A34A] dark:text-[#22C55E] tabular-numbers">
                     {formatMoney(savingsTips.totalPotentialMonthlySaving || 1500, currency)}/mo
                   </span>
                 </div>

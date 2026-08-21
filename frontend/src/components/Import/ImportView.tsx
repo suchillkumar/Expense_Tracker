@@ -464,19 +464,19 @@ export function ImportView() {
 
           <div className="flex items-center justify-center gap-10 mb-8">
             <div className="text-center">
-              <p className="text-3xl font-black text-green-600 tabular-nums">{importResult.imported}</p>
-              <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider mt-1">Imported</p>
+              <p className="text-3xl font-semibold text-green-600 tabular-nums">{importResult.imported}</p>
+              <p className="text-xs text-[#64748B] dark:text-[#94A3B8] font-medium uppercase tracking-wider mt-1">Imported</p>
             </div>
             {importResult.skipped > 0 && (
               <div className="text-center">
-                <p className="text-3xl font-black text-amber-500 tabular-nums">{importResult.skipped}</p>
-                <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider mt-1">Skipped</p>
+                <p className="text-3xl font-semibold text-amber-500 tabular-nums">{importResult.skipped}</p>
+                <p className="text-xs text-[#64748B] dark:text-[#94A3B8] font-medium uppercase tracking-wider mt-1">Skipped</p>
               </div>
             )}
             {importResult.failed > 0 && (
               <div className="text-center">
-                <p className="text-3xl font-black text-red-500 tabular-nums">{importResult.failed}</p>
-                <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider mt-1">Failed</p>
+                <p className="text-3xl font-semibold text-red-500 tabular-nums">{importResult.failed}</p>
+                <p className="text-xs text-[#64748B] dark:text-[#94A3B8] font-medium uppercase tracking-wider mt-1">Failed</p>
               </div>
             )}
           </div>

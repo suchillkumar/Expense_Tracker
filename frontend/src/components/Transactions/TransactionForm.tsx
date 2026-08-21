@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useExpense } from '../../context/ExpenseContext'
 import { useToast } from '../../context/ToastContext'
-import { EXPENSE_CATEGORIES, INCOME_CATEGORIES, PAYMENT_METHODS, Transaction, TransactionType } from '../../types'
-import { todayISO } from '../../utils/format'
+import { Transaction, TransactionType } from '../../types'
 import { categorize } from '../../services/categorizationService'
 
 interface TransactionFormProps {
@@ -11,82 +10,89 @@ interface TransactionFormProps {
   onClose: () => void
 }
 
+const EXPENSE_CATEGORIES = [
+  'Food',
+  'Transport',
+  'Shopping',
+  'Bills',
+  'Entertainment',
+  'Education',
+  'Healthcare',
+  'Travel',
+  'Other',
+]
+
+const INCOME_CATEGORIES = [
+  'Salary',
+  'Freelance',
+  'Investment',
+  'Gift',
+  'Other',
+]
+
+const PAYMENT_METHODS = ['Cash', 'Credit Card', 'Debit Card', 'UPI', 'Net Banking']
+
 export function TransactionForm({ initial, presetType = 'expense', onClose }: TransactionFormProps) {
   const { addTransaction, updateTransaction, currency } = useExpense()
   const toast = useToast()
 
-  const [type, setType] = useState<TransactionType>(initial?.type ?? presetType)
-  const [description, setDescription] = useState(initial?.description ?? '')
-  const [amount, setAmount] = useState(initial ? String(initial.amount) : '')
-  const [category, setCategory] = useState(initial?.category ?? (presetType === 'income' ? 'Salary' : 'Food'))
-  const [date, setDate] = useState(initial?.date ? initial.date.slice(0, 10) : todayISO())
-  const [paymentMethod, setPaymentMethod] = useState(initial?.paymentMethod ?? 'UPI')
-  const [notes, setNotes] = useState(initial?.notes ?? '')
+  const [type, setType] = useState<TransactionType>(initial?.type || presetType)
+  const [description, setDescription] = useState(initial?.description || '')
+  const [amount, setAmount] = useState(initial?.amount ? String(initial.amount) : '')
+  const [category, setCategory] = useState(initial?.category || 'Food')
+  const [date, setDate] = useState(initial?.date ? initial.date.split('T')[0] : new Date().toISOString().split('T')[0])
+  const [paymentMethod, setPaymentMethod] = useState(initial?.paymentMethod || 'UPI')
+  const [notes, setNotes] = useState(initial?.notes || '')
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
 
-  // AI Auto-Categorization state (Section 18)
+  // AI Categorization Recommendation State
   const [aiSuggestedCat, setAiSuggestedCat] = useState<string | null>(null)
   const [confidence, setConfidence] = useState<number>(0)
 
-  const [error, setError] = useState('')
-  const [saving, setSaving] = useState(false)
-
-  // Real-time AI prediction as user types description
+  // Trigger real-time categorization as description is typed
   useEffect(() => {
-    if (initial) return
-    if (!description.trim() || description.length < 2) {
-      setAiSuggestedCat(null)
-      return
-    }
-
-    if (type === 'income') {
-      const lower = description.toLowerCase()
-      if (lower.includes('salary') || lower.includes('paycheck') || lower.includes('wage')) {
-        setCategory('Salary')
-      } else if (lower.includes('freelance') || lower.includes('client') || lower.includes('consult')) {
-        setCategory('Freelance')
-      } else if (lower.includes('dividend') || lower.includes('interest') || lower.includes('stock')) {
-        setCategory('Investment')
+    if (!initial && description.trim().length >= 3 && type === 'expense') {
+      const match = categorize(description)
+      if (match.category && match.confidence >= 0.6 && match.category !== category) {
+        setAiSuggestedCat(match.category)
+        setConfidence(Math.round(match.confidence * 100))
+      } else {
+        setAiSuggestedCat(null)
       }
-      return
+    } else {
+      setAiSuggestedCat(null)
     }
-
-    // Expense AI Categorization
-    const res = categorize(description)
-    if (res && res.category) {
-      setAiSuggestedCat(res.category)
-      setConfidence(Math.min(Math.round(res.confidence * 100), 98))
-      setCategory(res.category)
-    }
-  }, [description, type, initial])
-
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
-    document.addEventListener('keydown', handleEsc)
-    return () => document.removeEventListener('keydown', handleEsc)
-  }, [onClose])
+  }, [description, type, initial, category])
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (saving) return
-    const num = Number(amount)
-    if (!description.trim()) { setError('Please enter a description.'); return }
-    if (!num || num <= 0) { setError('Please enter a valid amount greater than 0.'); return }
+    setError('')
+
+    const parsedAmount = parseFloat(amount)
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      setError('Please enter a valid positive amount.')
+      return
+    }
+    if (!description.trim()) {
+      setError('Please provide a description.')
+      return
+    }
 
     setSaving(true)
-    setError('')
     try {
-      const payload: Omit<Transaction, 'id'> = {
-        description: description.trim(),
-        amount: num,
+      const payload = {
         type,
+        description: description.trim(),
+        amount: parsedAmount,
         category,
-        date: new Date(date + 'T00:00:00').toISOString(),
+        date: new Date(date).toISOString(),
         paymentMethod,
-        notes: notes.trim() || undefined,
+        notes: notes.trim(),
       }
 
-      if (initial) {
-        await updateTransaction({ ...payload, id: initial.id })
+      if (initial?.id) {
+        await updateTransaction({ ...payload, id: initial.id } as Transaction)
         toast.success('Transaction updated successfully.')
       } else {
         await addTransaction(payload)
@@ -103,21 +109,21 @@ export function TransactionForm({ initial, presetType = 'expense', onClose }: Tr
   const categoryOptions = type === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-      <div className="relative bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-gray-100 dark:border-slate-800 w-full max-w-lg max-h-[92vh] overflow-y-auto animate-scale-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in">
+      <div className="relative bg-white dark:bg-[#1E293B] rounded-3xl shadow-2xl border border-[#E2E8F0] dark:border-[#334155] w-full max-w-lg max-h-[92vh] overflow-y-auto animate-fade-in-up">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-slate-800">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E2E8F0] dark:border-[#334155]">
           <div>
-            <h2 className="text-base font-black text-gray-900 dark:text-white">
+            <h2 className="text-base font-semibold text-[#1E293B] dark:text-[#F8FAFC]">
               {initial ? 'Edit Transaction' : type === 'income' ? 'Add Income' : 'Add Expense'}
             </h2>
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-[#64748B] dark:text-[#94A3B8] font-normal mt-0.5">
               {initial ? 'Update record details' : 'Record a new cashflow movement'}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-xl text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-xl text-[#64748B] hover:text-[#1E293B] dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#243244] transition-colors"
           >
             ✕
           </button>
@@ -125,14 +131,14 @@ export function TransactionForm({ initial, presetType = 'expense', onClose }: Tr
 
         <form onSubmit={submit} className="p-6 space-y-4">
           {/* Type Toggle */}
-          <div className="grid grid-cols-2 gap-1.5 bg-gray-100 dark:bg-slate-800 p-1.5 rounded-2xl">
+          <div className="grid grid-cols-2 gap-1.5 bg-slate-100 dark:bg-[#243244] p-1.5 rounded-2xl border border-[#E2E8F0] dark:border-[#334155]">
             <button
               type="button"
               onClick={() => { setType('expense'); setCategory('Food') }}
-              className={`py-2.5 rounded-xl text-xs font-bold transition-all ${
+              className={`py-2 rounded-xl text-sm font-medium transition-all ${
                 type === 'expense'
-                  ? 'bg-white dark:bg-slate-900 text-red-600 dark:text-red-400 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                  ? 'bg-white dark:bg-[#1E293B] text-[#DC2626] dark:text-[#F87171] shadow-xs'
+                  : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
               }`}
             >
               💸 Expense
@@ -140,10 +146,10 @@ export function TransactionForm({ initial, presetType = 'expense', onClose }: Tr
             <button
               type="button"
               onClick={() => { setType('income'); setCategory('Salary') }}
-              className={`py-2.5 rounded-xl text-xs font-bold transition-all ${
+              className={`py-2 rounded-xl text-sm font-medium transition-all ${
                 type === 'income'
-                  ? 'bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                  ? 'bg-white dark:bg-[#1E293B] text-[#16A34A] dark:text-[#22C55E] shadow-xs'
+                  : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
               }`}
             >
               💰 Income
@@ -152,14 +158,14 @@ export function TransactionForm({ initial, presetType = 'expense', onClose }: Tr
 
           {/* Description */}
           <div>
-            <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1">
               Description *
             </label>
             <input
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="e.g. Swiggy food delivery, Uber commute, Netflix, Salary"
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
+              placeholder="e.g. Food delivery, Taxi commute, Netflix, Salary"
+              className="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#243244] text-sm text-[#1E293B] dark:text-[#F8FAFC] placeholder-[#64748B] focus:ring-2 focus:ring-blue-500/20 focus:border-[#2563EB] outline-none font-normal"
               autoFocus
             />
           </div>
@@ -167,7 +173,7 @@ export function TransactionForm({ initial, presetType = 'expense', onClose }: Tr
           {/* Amount & Date */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1">
                 Amount ({currency}) *
               </label>
               <input
@@ -178,11 +184,11 @@ export function TransactionForm({ initial, presetType = 'expense', onClose }: Tr
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0.00"
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-sm font-black text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
+                className="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#243244] text-sm font-semibold text-[#1E293B] dark:text-[#F8FAFC] focus:ring-2 focus:ring-blue-500/20 focus:border-[#2563EB] outline-none"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1">
                 Date *
               </label>
               <input
@@ -190,33 +196,33 @@ export function TransactionForm({ initial, presetType = 'expense', onClose }: Tr
                 required
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
+                className="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#243244] text-sm text-[#1E293B] dark:text-[#F8FAFC] focus:ring-2 focus:ring-blue-500/20 focus:border-[#2563EB] outline-none font-normal"
               />
             </div>
           </div>
 
           {/* Category with AI Auto-Categorization */}
           <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC]">
                 Category *
               </label>
               {aiSuggestedCat && (
                 <button
                   type="button"
                   onClick={() => setCategory(aiSuggestedCat)}
-                  className="inline-flex items-center gap-1 text-[11px] font-bold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded-lg border border-indigo-200 dark:border-indigo-800 animate-pulse hover:bg-indigo-100 transition-colors"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-[#7C3AED] dark:text-[#A78BFA] bg-purple-50 dark:bg-purple-950/60 px-2 py-0.5 rounded-lg border border-purple-200 dark:border-purple-800 transition-colors"
                 >
                   <span>✨ AI Suggested:</span>
-                  <span className="underline">{aiSuggestedCat}</span>
-                  <span className="text-[9px] opacity-75">({confidence}%)</span>
+                  <span className="underline font-semibold">{aiSuggestedCat}</span>
+                  <span className="text-[10px] opacity-75">({confidence}%)</span>
                 </button>
               )}
             </div>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
+              className="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#243244] text-sm text-[#1E293B] dark:text-[#F8FAFC] focus:ring-2 focus:ring-blue-500/20 focus:border-[#2563EB] outline-none font-normal"
             >
               {categoryOptions.map((c) => (
                 <option key={c} value={c}>
@@ -229,13 +235,13 @@ export function TransactionForm({ initial, presetType = 'expense', onClose }: Tr
           {/* Payment Method & Notes */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1">
                 Payment Method
               </label>
               <select
                 value={paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
+                className="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#243244] text-sm text-[#1E293B] dark:text-[#F8FAFC] focus:ring-2 focus:ring-blue-500/20 focus:border-[#2563EB] outline-none font-normal"
               >
                 {PAYMENT_METHODS.map((m) => (
                   <option key={m} value={m}>
@@ -246,7 +252,7 @@ export function TransactionForm({ initial, presetType = 'expense', onClose }: Tr
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1">
                 Notes (Optional)
               </label>
               <input
@@ -254,14 +260,14 @@ export function TransactionForm({ initial, presetType = 'expense', onClose }: Tr
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Remarks or reference ID"
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 text-xs text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
+                className="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#243244] text-sm text-[#1E293B] dark:text-[#F8FAFC] placeholder-[#64748B] focus:ring-2 focus:ring-blue-500/20 focus:border-[#2563EB] outline-none font-normal"
               />
             </div>
           </div>
 
           {/* Error */}
           {error && (
-            <p className="text-xs text-red-600 bg-red-50 dark:bg-red-950/40 rounded-xl px-4 py-2.5 border border-red-200 dark:border-red-900 animate-fade-in">
+            <p className="text-xs text-[#DC2626] dark:text-[#F87171] bg-red-50 dark:bg-red-950/40 rounded-xl px-4 py-2.5 border border-red-200 dark:border-red-900 animate-fade-in font-medium">
               {error}
             </p>
           )}
@@ -271,14 +277,14 @@ export function TransactionForm({ initial, presetType = 'expense', onClose }: Tr
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 text-xs font-bold flex-1 transition-colors"
+              className="px-5 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] text-[#64748B] dark:text-[#94A3B8] hover:bg-slate-100 dark:hover:bg-[#243244] text-sm font-medium flex-1 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-700 hover:to-sky-700 text-white text-xs font-bold shadow-md shadow-indigo-600/20 flex-1 disabled:opacity-50 transition-all"
+              className="px-6 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#60A5FA] text-white text-sm font-medium shadow-xs flex-1 disabled:opacity-50 transition-all"
             >
               {saving ? 'Saving...' : initial ? 'Save Changes' : 'Record Transaction'}
             </button>

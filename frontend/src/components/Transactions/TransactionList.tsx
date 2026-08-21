@@ -178,24 +178,24 @@ export function TransactionList({ limit }: TransactionListProps) {
       {/* 1. Header & Actions */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-black text-[#0F172A] dark:text-white tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#1E293B] dark:text-[#F8FAFC]">
             Transactions
           </h2>
-          <p className="text-xs text-[#64748B] dark:text-slate-400 mt-0.5">
-            Search, filter, and audit your personal income and expense records.
+          <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5 font-normal">
+            Search, filter, and manage your income and expense records.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <button
             onClick={() => handleOpenAdd('income')}
-            className="px-4 py-2.5 rounded-xl bg-[#10B981] hover:bg-emerald-600 text-white text-xs font-bold shadow-sm shadow-emerald-500/20 transition-all flex items-center gap-1.5 active:scale-[0.98]"
+            className="px-4 py-2 rounded-xl bg-[#16A34A] hover:bg-[#15803D] dark:bg-[#16A34A] dark:hover:bg-[#22C55E] text-white text-sm font-medium shadow-xs transition-all flex items-center gap-1.5"
           >
             <span>💰</span> + Add Income
           </button>
           <button
             onClick={() => handleOpenAdd('expense')}
-            className="px-4 py-2.5 rounded-xl bg-[#EF4444] hover:bg-red-600 text-white text-xs font-bold shadow-sm shadow-red-500/20 transition-all flex items-center gap-1.5 active:scale-[0.98]"
+            className="px-4 py-2 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] dark:bg-[#DC2626] dark:hover:bg-[#EF4444] text-white text-sm font-medium shadow-xs transition-all flex items-center gap-1.5"
           >
             <span>🔴</span> + Add Expense
           </button>
@@ -209,19 +209,19 @@ export function TransactionList({ limit }: TransactionListProps) {
           <div className="flex items-center bg-slate-100 dark:bg-[#243244] p-1 rounded-xl gap-1 border border-[#E2E8F0] dark:border-[#334155]">
             <button
               onClick={() => { setTab('all'); setPage(1) }}
-              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all ${
                 tab === 'all'
-                  ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+                  ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs font-semibold'
                   : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
               }`}
             >
-              All Transactions ({transactions.length})
+              All ({transactions.length})
             </button>
             <button
               onClick={() => { setTab('income'); setPage(1) }}
-              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all ${
                 tab === 'income'
-                  ? 'bg-white dark:bg-[#1E293B] text-[#16A34A] dark:text-[#22C55E] shadow-xs'
+                  ? 'bg-white dark:bg-[#1E293B] text-[#16A34A] dark:text-[#22C55E] shadow-xs font-semibold'
                   : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
               }`}
             >
@@ -229,9 +229,9 @@ export function TransactionList({ limit }: TransactionListProps) {
             </button>
             <button
               onClick={() => { setTab('expense'); setPage(1) }}
-              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all ${
                 tab === 'expense'
-                  ? 'bg-white dark:bg-[#1E293B] text-[#DC2626] dark:text-[#F87171] shadow-xs'
+                  ? 'bg-white dark:bg-[#1E293B] text-[#DC2626] dark:text-[#F87171] shadow-xs font-semibold'
                   : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
               }`}
             >
@@ -241,13 +241,13 @@ export function TransactionList({ limit }: TransactionListProps) {
 
           {/* Active Filter Count / Reset */}
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-[#64748B] dark:text-[#94A3B8]">
+            <span className="text-xs font-medium text-[#64748B] dark:text-[#94A3B8]">
               Showing {filtered.length} of {transactions.length}
             </span>
             {(search || selectedCategory !== 'all' || selectedPaymentMethod !== 'all' || dateRange !== 'all' || minAmount || maxAmount || tab !== 'all') && (
               <button
                 onClick={resetFilters}
-                className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline px-2.5 py-1 bg-blue-50 dark:bg-blue-950/40 rounded-lg"
+                className="text-xs font-semibold text-[#2563EB] dark:text-[#60A5FA] hover:underline px-2.5 py-1 bg-blue-50 dark:bg-blue-950/40 rounded-lg"
               >
                 Clear Filters ✕
               </button>
@@ -425,31 +425,31 @@ export function TransactionList({ limit }: TransactionListProps) {
                             {tx.category}
                           </span>
                         </td>
-                        <td className="py-3.5 px-4 text-[#64748B] dark:text-slate-400 font-medium whitespace-nowrap">
+                        <td className="py-3 px-4 text-[#64748B] dark:text-[#94A3B8] font-normal whitespace-nowrap text-sm">
                           {tx.paymentMethod || 'Cash'}
                         </td>
-                        <td className="py-3.5 px-4 text-[#64748B] dark:text-slate-400 max-w-[160px] truncate">
+                        <td className="py-3 px-4 text-[#64748B] dark:text-[#94A3B8] max-w-[160px] truncate text-sm font-normal">
                           {tx.notes || '—'}
                         </td>
                         <td
-                          className={`py-3.5 px-5 text-right font-black tabular-numbers whitespace-nowrap text-sm ${
-                            isIncome ? 'text-[#10B981]' : 'text-[#EF4444]'
+                          className={`py-3 px-5 text-right font-semibold tabular-numbers whitespace-nowrap text-sm ${
+                            isIncome ? 'text-[#16A34A] dark:text-[#22C55E]' : 'text-[#DC2626] dark:text-[#F87171]'
                           }`}
                         >
                           {isIncome ? '+' : '−'} {formatMoney(tx.amount, currency)}
                         </td>
-                        <td className="py-3.5 px-5 text-right whitespace-nowrap">
+                        <td className="py-3 px-5 text-right whitespace-nowrap">
                           <div className="flex items-center justify-end gap-1 opacity-80 group-hover:opacity-100">
                             <button
                               onClick={(e) => handleOpenEdit(tx, e)}
-                              className="p-1.5 rounded-lg text-[#64748B] hover:text-[#2563EB] hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors"
+                              className="p-1.5 rounded-lg text-[#64748B] hover:text-[#2563EB] hover:bg-blue-50 dark:hover:bg-[#1E293B] transition-colors"
                               title="Edit"
                             >
                               ✏️
                             </button>
                             <button
                               onClick={(e) => handleOpenDelete(tx, e)}
-                              className="p-1.5 rounded-lg text-[#64748B] hover:text-[#EF4444] hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
+                              className="p-1.5 rounded-lg text-[#64748B] hover:text-[#DC2626] hover:bg-red-50 dark:hover:bg-[#1E293B] transition-colors"
                               title="Delete"
                             >
                               🗑️
@@ -464,32 +464,32 @@ export function TransactionList({ limit }: TransactionListProps) {
             </div>
 
             {/* Mobile Card List View */}
-            <div className="sm:hidden divide-y divide-[#E2E8F0] dark:divide-slate-800">
+            <div className="sm:hidden divide-y divide-[#E2E8F0] dark:divide-[#334155]">
               {paginatedList.map((tx) => {
                 const isIncome = tx.type === 'income'
                 return (
                   <div
                     key={tx.id}
                     onClick={() => setViewDetailsTx(tx)}
-                    className="p-4 space-y-2 hover:bg-[#F8FAFC] dark:hover:bg-slate-800/40 transition-colors"
+                    className="p-4 space-y-2 hover:bg-slate-50 dark:hover:bg-[#243244] transition-colors"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <span className="w-8 h-8 rounded-xl bg-gray-100 dark:bg-slate-800 flex items-center justify-center text-sm shrink-0">
+                        <span className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-[#243244] flex items-center justify-center text-sm shrink-0">
                           {CATEGORY_ICONS[tx.category] || '📦'}
                         </span>
                         <div className="min-w-0">
-                          <p className="text-xs font-bold text-[#0F172A] dark:text-white truncate">
+                          <p className="text-sm font-semibold text-[#1E293B] dark:text-[#F8FAFC] truncate">
                             {tx.description}
                           </p>
-                          <p className="text-[10px] text-[#64748B] dark:text-slate-400 mt-0.5">
+                          <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-0.5 font-normal">
                             {formatDate(tx.date)} • {tx.paymentMethod || 'Cash'}
                           </p>
                         </div>
                       </div>
                       <p
-                        className={`text-sm font-black tabular-numbers shrink-0 ${
-                          isIncome ? 'text-[#10B981]' : 'text-[#EF4444]'
+                        className={`text-sm font-semibold tabular-numbers shrink-0 ${
+                          isIncome ? 'text-[#16A34A] dark:text-[#22C55E]' : 'text-[#DC2626] dark:text-[#F87171]'
                         }`}
                       >
                         {isIncome ? '+' : '−'} {formatMoney(tx.amount, currency)}
@@ -498,7 +498,7 @@ export function TransactionList({ limit }: TransactionListProps) {
 
                     <div className="flex items-center justify-between pt-1">
                       <span
-                        className="px-2 py-0.5 rounded-md text-[10px] font-semibold border"
+                        className="px-2 py-0.5 rounded-md text-xs font-medium border"
                         style={{
                           backgroundColor: `${categoryColor(tx.category)}15`,
                           borderColor: `${categoryColor(tx.category)}35`,
@@ -510,13 +510,13 @@ export function TransactionList({ limit }: TransactionListProps) {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={(e) => handleOpenEdit(tx, e)}
-                          className="text-xs text-[#2563EB] font-bold p-1"
+                          className="text-xs text-[#2563EB] dark:text-[#60A5FA] font-medium p-1"
                         >
                           Edit
                         </button>
                         <button
                           onClick={(e) => handleOpenDelete(tx, e)}
-                          className="text-xs text-[#EF4444] font-bold p-1"
+                          className="text-xs text-[#DC2626] dark:text-[#F87171] font-medium p-1"
                         >
                           Delete
                         </button>
@@ -580,7 +580,7 @@ export function TransactionList({ limit }: TransactionListProps) {
               <div className="flex justify-between py-1 border-b border-gray-100 dark:border-[#334155]">
                 <span className="text-[#64748B] dark:text-[#94A3B8]">Amount</span>
                 <span
-                  className={`font-black tabular-numbers text-sm ${
+                  className={`font-semibold tabular-numbers text-sm ${
                     viewDetailsTx.type === 'income' ? 'text-[#16A34A] dark:text-[#22C55E]' : 'text-[#DC2626] dark:text-[#F87171]'
                   }`}
                 >
