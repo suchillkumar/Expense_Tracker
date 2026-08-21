@@ -34,13 +34,17 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       setIsDark(effectiveDark)
       if (effectiveDark) {
         root.classList.add('dark')
+        document.body.classList.add('dark')
       } else {
         root.classList.remove('dark')
+        document.body.classList.remove('dark')
       }
     }
 
     applyTheme()
-    localStorage.setItem(THEME_STORAGE_KEY, theme)
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, theme)
+    } catch {}
 
     const listener = () => {
       if (theme === 'system') applyTheme()
