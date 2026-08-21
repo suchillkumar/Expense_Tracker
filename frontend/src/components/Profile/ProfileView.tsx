@@ -125,7 +125,7 @@ export function ProfileView() {
   }
 
   const inputClass =
-    'w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-slate-700 bg-[#F8FAFC] dark:bg-slate-800 text-xs font-medium text-[#0F172A] dark:text-white focus:ring-2 focus:ring-blue-500/20 focus:border-[#2563EB] outline-none transition-all'
+    'w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#243244] text-sm font-normal text-[#1E293B] dark:text-[#F8FAFC] focus:ring-2 focus:ring-blue-500/20 focus:border-[#2563EB] outline-none transition-all'
 
   return (
     <div className="space-y-6 animate-fade-in pb-12 max-w-5xl mx-auto">
@@ -210,7 +210,7 @@ export function ProfileView() {
         <form onSubmit={handleSavePersonal} className="fintech-card p-6 sm:p-8 space-y-6">
           {/* Avatar Picker */}
           <div>
-            <label className="block text-xs font-bold text-[#0F172A] dark:text-white mb-2">Choose Avatar</label>
+            <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-2">Choose Avatar</label>
             <div className="flex flex-wrap gap-2">
               {AVATARS.map((av) => (
                 <button
@@ -231,7 +231,7 @@ export function ProfileView() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-[#0F172A] dark:text-white mb-1.5">Full Name *</label>
+              <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">Full Name *</label>
               <input
                 type="text"
                 required
@@ -242,7 +242,7 @@ export function ProfileView() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#0F172A] dark:text-white mb-1.5">Email Address *</label>
+              <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">Email Address *</label>
               <input
                 type="email"
                 required
@@ -253,7 +253,7 @@ export function ProfileView() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#0F172A] dark:text-white mb-1.5">Phone Number</label>
+              <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">Phone Number</label>
               <input
                 type="tel"
                 value={phone}
@@ -264,7 +264,7 @@ export function ProfileView() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#0F172A] dark:text-white mb-1.5">Age</label>
+              <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">Age</label>
               <input
                 type="number"
                 min="16"
@@ -277,7 +277,7 @@ export function ProfileView() {
             </div>
 
             <div className="sm:col-span-2">
-              <label className="block text-xs font-bold text-[#0F172A] dark:text-white mb-1.5">Occupation / Profession</label>
+              <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">Occupation / Profession</label>
               <input
                 type="text"
                 value={occupation}
@@ -292,7 +292,7 @@ export function ProfileView() {
             <button
               type="submit"
               disabled={saving}
-              className="px-6 py-2.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-500/20 disabled:opacity-50 transition-all"
+              className="px-6 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#60A5FA] text-white text-sm font-medium shadow-xs disabled:opacity-50 transition-all"
             >
               {saving ? 'Saving changes...' : 'Save Profile'}
             </button>
@@ -305,7 +305,7 @@ export function ProfileView() {
         <form onSubmit={handleSaveFinancial} className="fintech-card p-6 sm:p-8 space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-[#0F172A] dark:text-white mb-1.5">Preferred Currency</label>
+              <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">Preferred Currency</label>
               <select
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
@@ -320,7 +320,7 @@ export function ProfileView() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#0F172A] dark:text-white mb-1.5">Monthly Salary / Income ({currency})</label>
+              <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">Monthly Salary / Income ({currency})</label>
               <input
                 type="number"
                 min="0"
@@ -332,7 +332,7 @@ export function ProfileView() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#0F172A] dark:text-white mb-1.5">Preferred Budget Period</label>
+              <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">Preferred Budget Period</label>
               <select
                 value={budgetPeriod}
                 onChange={(e) => setBudgetPeriod(e.target.value)}
@@ -344,7 +344,7 @@ export function ProfileView() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#0F172A] dark:text-white mb-1.5">Primary Financial Milestone</label>
+              <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">Primary Financial Milestone</label>
               <select
                 value={financialGoal}
                 onChange={(e) => setFinancialGoal(e.target.value)}
@@ -360,16 +360,16 @@ export function ProfileView() {
           </div>
 
           {/* Quick Demo Data Loader Section */}
-          <div className="pt-4 border-t border-[#E2E8F0] dark:border-slate-800 flex flex-wrap items-center justify-between gap-4">
+          <div className="pt-4 border-t border-[#E2E8F0] dark:border-[#334155] flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h4 className="text-xs font-bold text-[#0F172A] dark:text-white">Developer Testing & Exploration</h4>
-              <p className="text-[11px] text-[#64748B] dark:text-slate-400">Load sample salary deposits, rent, groceries, and budget limits.</p>
+              <h4 className="text-sm font-semibold text-[#1E293B] dark:text-[#F8FAFC]">Developer Testing & Exploration</h4>
+              <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-0.5 font-normal">Load sample salary deposits, rent, groceries, and budget limits.</p>
             </div>
             <button
               type="button"
               onClick={handleLoadDemo}
               disabled={demoLoading}
-              className="px-4 py-2 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-[#2563EB] dark:text-blue-400 hover:bg-blue-100 text-xs font-bold transition-all"
+              className="px-4 py-2 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-[#2563EB] dark:text-[#60A5FA] hover:bg-blue-100 dark:hover:bg-blue-900/40 text-sm font-medium transition-all"
             >
               {demoLoading ? 'Loading Sample Data...' : '🚀 Load Demo Data'}
             </button>
@@ -379,7 +379,7 @@ export function ProfileView() {
             <button
               type="submit"
               disabled={saving}
-              className="px-6 py-2.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-500/20 disabled:opacity-50 transition-all"
+              className="px-6 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#60A5FA] text-white text-sm font-medium shadow-xs disabled:opacity-50 transition-all"
             >
               {saving ? 'Saving changes...' : 'Save Financial Profile'}
             </button>
@@ -491,9 +491,9 @@ export function ProfileView() {
       {/* TAB 4: Security & Password */}
       {tab === 'security' && (
         <form onSubmit={handleChangePassword} className="fintech-card p-6 sm:p-8 space-y-4 max-w-lg">
-          <h3 className="font-bold text-sm text-[#0F172A] dark:text-white">Change Account Password</h3>
+          <h3 className="font-semibold text-base text-[#1E293B] dark:text-[#F8FAFC]">Change Account Password</h3>
           <div>
-            <label className="block text-xs font-bold text-[#0F172A] dark:text-white mb-1.5">Current Password *</label>
+            <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">Current Password *</label>
             <input
               type="password"
               required
@@ -504,7 +504,7 @@ export function ProfileView() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-[#0F172A] dark:text-white mb-1.5">New Password *</label>
+            <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">New Password *</label>
             <input
               type="password"
               required
@@ -516,7 +516,7 @@ export function ProfileView() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-[#0F172A] dark:text-white mb-1.5">Confirm New Password *</label>
+            <label className="block text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">Confirm New Password *</label>
             <input
               type="password"
               required
@@ -530,7 +530,7 @@ export function ProfileView() {
             <button
               type="submit"
               disabled={saving}
-              className="px-6 py-2.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-500/20 disabled:opacity-50 transition-all"
+              className="px-6 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#60A5FA] text-white text-sm font-medium shadow-xs disabled:opacity-50 transition-all"
             >
               {saving ? 'Updating password...' : 'Update Password'}
             </button>
