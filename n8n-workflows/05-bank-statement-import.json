@@ -1,0 +1,142 @@
+{
+  "name": "05 - Bank Statement Import",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "statement-import",
+        "options": {}
+      },
+      "name": "Webhook: Statement Import",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const payload = $input.first().json;\nconst data = payload.data || payload;\nconst rows = data.rows || [];\nconst userId = payload.userId || data.userId;\nconst deduplicate = data.deduplicate !== false;\n\nlet validRows = [];\nlet invalidCount = 0;\n\nfor (const row of rows) {\n  const desc = (row.description || '').trim();\n  const amt = parseFloat(row.amount);\n  if (!desc || isNaN(amt) || amt === 0) {\n    invalidCount++;\n    continue;\n  }\n  validRows.push({\n    description: desc,\n    amount: Math.abs(amt),\n    type: row.type || (amt < 0 ? 'expense' : 'income'),\n    category: row.category || 'Other',\n    date: row.date || new Date().toISOString(),\n    currency: row.currency || 'INR',\n    notes: row.notes || 'Imported via n8n Statement Pipeline'\n  });\n}\n\nreturn [{\n  json: {\n    userId,\n    validRows,\n    invalidCount,\n    deduplicate,\n    totalInput: rows.length,\n    logId: payload.logId\n  }\n}];"
+      },
+      "name": "Parse & Validate Statement Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:3001/api/transactions/import",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Webhook-Secret",
+              "value": "n8n_expense_tracker_secret_key_2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "rows",
+              "value": "={{ $json.validRows }}"
+            },
+            {
+              "name": "deduplicate",
+              "value": "={{ $json.deduplicate }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Insert Transactions to DB",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:3001/api/automations/webhooks/inbound",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Webhook-Secret",
+              "value": "n8n_expense_tracker_secret_key_2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "create_notification"
+            },
+            {
+              "name": "userId",
+              "value": "={{ $('Parse & Validate Statement Rows').first().json.userId }}"
+            },
+            {
+              "name": "data",
+              "value": "={{ { message: '📥 Statement Processed: Added ' + ($json.count || 0) + ' transactions (' + ($json.errors?.length || 0) + ' skipped).', type: 'success', category: 'import', details: $json } }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Dispatch Import Summary",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "Webhook: Statement Import": {
+      "main": [
+        [
+          {
+            "node": "Parse & Validate Statement Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse & Validate Statement Rows": {
+      "main": [
+        [
+          {
+            "node": "Insert Transactions to DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Transactions to DB": {
+      "main": [
+        [
+          {
+            "node": "Dispatch Import Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

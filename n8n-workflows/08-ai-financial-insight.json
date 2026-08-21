@@ -1,0 +1,125 @@
+{
+  "name": "08 - AI Financial Insight Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "insight-generate",
+        "options": {}
+      },
+      "name": "Webhook: Generate Insights",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://localhost:3001/api/ai/insights",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Webhook-Secret",
+              "value": "n8n_expense_tracker_secret_key_2026"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Fetch AI Insights from Backend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const res = $input.first().json;\nconst insights = res.insights || [];\nconst webhookData = $('Webhook: Generate Insights').first().json;\nconst userId = webhookData.userId;\n\nconst topInsight = insights.length > 0 ? insights[0].message : 'Keep tracking your expenses to build financial momentum.';\n\nreturn [{\n  json: {\n    userId,\n    insightCount: insights.length,\n    insights,\n    summaryMessage: `💡 Weekly Financial Insight: ${topInsight}`,\n    logId: webhookData.logId\n  }\n}];"
+      },
+      "name": "Synthesize Actionable Intelligence",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:3001/api/automations/webhooks/inbound",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Webhook-Secret",
+              "value": "n8n_expense_tracker_secret_key_2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "create_notification"
+            },
+            {
+              "name": "userId",
+              "value": "={{ $json.userId }}"
+            },
+            {
+              "name": "data",
+              "value": "={{ { message: $json.summaryMessage, type: 'info', category: 'insight', details: { insights: $json.insights } } }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Dispatch Insight Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "Webhook: Generate Insights": {
+      "main": [
+        [
+          {
+            "node": "Fetch AI Insights from Backend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch AI Insights from Backend": {
+      "main": [
+        [
+          {
+            "node": "Synthesize Actionable Intelligence",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Synthesize Actionable Intelligence": {
+      "main": [
+        [
+          {
+            "node": "Dispatch Insight Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

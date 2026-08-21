@@ -1,0 +1,98 @@
+{
+  "name": "02 - Budget Threshold Alert",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "budget-threshold",
+        "options": {}
+      },
+      "name": "Webhook: Budget Threshold",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const payload = $input.first().json;\nconst data = payload.data || payload;\nconst currentSpent = parseFloat(data.currentSpent || 0);\nconst limit = parseFloat(data.limit || 1);\nconst category = data.category || 'General';\nconst month = data.month || new Date().toISOString().slice(0, 7);\nconst userId = payload.userId || data.userId;\nconst pct = Math.round((currentSpent / limit) * 100);\n\nconst isOverLimit = pct >= 100;\nconst isWarning = pct >= 80;\nconst severity = isOverLimit ? 'critical' : 'warning';\n\nconst message = isOverLimit\n  ? `🚨 Budget Exceeded: You have spent ₹${currentSpent.toLocaleString()} (${pct}%) against your ₹${limit.toLocaleString()} limit for ${category}.`\n  : `⚠️ Budget Warning: ${category} spending has reached ${pct}% (₹${currentSpent.toLocaleString()} / ₹${limit.toLocaleString()}).`;\n\nreturn [{\n  json: {\n    userId,\n    category,\n    currentSpent,\n    limit,\n    pct,\n    month,\n    severity,\n    message,\n    logId: payload.logId,\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "name": "Calculate Utilization & Format Alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:3001/api/automations/webhooks/inbound",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Webhook-Secret",
+              "value": "n8n_expense_tracker_secret_key_2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "create_notification"
+            },
+            {
+              "name": "userId",
+              "value": "={{ $json.userId }}"
+            },
+            {
+              "name": "logId",
+              "value": "={{ $json.logId }}"
+            },
+            {
+              "name": "data",
+              "value": "={{ { message: $json.message, type: $json.severity === 'critical' ? 'alert' : 'warning', category: 'budget', details: { category: $json.category, pct: $json.pct, month: $json.month, spent: $json.currentSpent, limit: $json.limit } } }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Dispatch Budget Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [700, 300]
+    }
+  ],
+  "connections": {
+    "Webhook: Budget Threshold": {
+      "main": [
+        [
+          {
+            "node": "Calculate Utilization & Format Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Utilization & Format Alert": {
+      "main": [
+        [
+          {
+            "node": "Dispatch Budget Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

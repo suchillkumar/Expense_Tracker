@@ -1,0 +1,152 @@
+{
+  "name": "03 - Bill Payment Reminder",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 24
+            }
+          ]
+        }
+      },
+      "name": "Schedule: Daily Check 09:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [220, 240]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bill-reminder",
+        "options": {}
+      },
+      "name": "Webhook: Manual Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [220, 420]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://localhost:3001/api/automations/bills?is_paid=false",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Webhook-Secret",
+              "value": "n8n_expense_tracker_secret_key_2026"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Fetch Unpaid Bills",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "const bills = $input.first().json;\nconst now = new Date();\nconst reminders = [];\n\nif (Array.isArray(bills)) {\n  for (const bill of bills) {\n    const due = new Date(bill.dueDate || bill.due_date);\n    const diffMs = due.getTime() - now.getTime();\n    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));\n\n    if (diffDays <= 7) {\n      const urgency = diffDays <= 0 ? 'today' : diffDays === 1 ? 'tomorrow' : `${diffDays} days`;\n      const msg = diffDays <= 0\n        ? `🚨 Bill Due TODAY: \"${bill.title}\" (₹${bill.amount.toLocaleString()}) is due today!`\n        : `🔔 Upcoming Bill: \"${bill.title}\" (₹${bill.amount.toLocaleString()}) is due in ${urgency}.`;\n\n      reminders.push({\n        billId: bill.id || bill._id,\n        userId: bill.userId || bill.user_id,\n        title: bill.title,\n        amount: bill.amount,\n        diffDays,\n        message: msg,\n        type: diffDays <= 1 ? 'alert' : 'info'\n      });\n    }\n  }\n}\n\nreturn reminders.map(r => ({ json: r }));"
+      },
+      "name": "Filter Due Bills & Calculate Days",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 320]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:3001/api/automations/webhooks/inbound",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Webhook-Secret",
+              "value": "n8n_expense_tracker_secret_key_2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "create_notification"
+            },
+            {
+              "name": "userId",
+              "value": "={{ $json.userId }}"
+            },
+            {
+              "name": "data",
+              "value": "={{ { message: $json.message, type: $json.type, category: 'bill', details: { billId: $json.billId, amount: $json.amount, diffDays: $json.diffDays } } }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Send Bill Reminder Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 320]
+    }
+  ],
+  "connections": {
+    "Schedule: Daily Check 09:00": {
+      "main": [
+        [
+          {
+            "node": "Fetch Unpaid Bills",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook: Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch Unpaid Bills",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Unpaid Bills": {
+      "main": [
+        [
+          {
+            "node": "Filter Due Bills & Calculate Days",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Due Bills & Calculate Days": {
+      "main": [
+        [
+          {
+            "node": "Send Bill Reminder Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

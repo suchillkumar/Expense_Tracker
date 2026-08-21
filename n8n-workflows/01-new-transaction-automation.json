@@ -1,0 +1,173 @@
+{
+  "name": "01 - New Transaction Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "transaction-created",
+        "options": {}
+      },
+      "name": "Webhook: Transaction Created",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract transaction data & validate fields\nconst payload = $input.first().json;\nconst data = payload.data || payload;\nconst description = data.description || '';\nconst amount = parseFloat(data.amount || 0);\nconst type = data.type || 'expense';\nconst category = data.category || 'Other';\nconst userId = payload.userId || data.userId;\nconst txId = payload.referenceId || data.transactionId;\n\n// Basic categorization rules\nconst keywords = {\n  Food: ['restaurant', 'cafe', 'coffee', 'pizza', 'burger', 'swiggy', 'zomato', 'food', 'groceries'],\n  Transport: ['uber', 'lyft', 'taxi', 'fuel', 'petrol', 'parking', 'metro', 'bus', 'train'],\n  Bills: ['electric', 'water', 'internet', 'wifi', 'utility', 'netflix', 'spotify', 'subscription'],\n  Shopping: ['amazon', 'flipkart', 'store', 'mall', 'clothing', 'shoes', 'electronics'],\n  Health: ['pharmacy', 'medicine', 'hospital', 'doctor', 'gym', 'fitness'],\n  Salary: ['salary', 'payroll', 'wage', 'stipend', 'deposit']\n};\n\nlet suggestedCategory = category;\nif (!category || category === 'Other' || category === 'Uncategorized') {\n  const lowerDesc = description.toLowerCase();\n  for (const [cat, words] of Object.entries(keywords)) {\n    if (words.some(w => lowerDesc.includes(w))) {\n      suggestedCategory = cat;\n      break;\n    }\n  }\n}\n\n// Anomaly check heuristic\nconst isAnomaly = type === 'expense' && (amount >= 10000 || (suggestedCategory === 'Food' && amount > 3000));\nconst severity = amount > 25000 ? 'high' : isAnomaly ? 'medium' : 'normal';\n\nreturn [{\n  json: {\n    userId,\n    transactionId: txId,\n    description,\n    amount,\n    type,\n    originalCategory: category,\n    suggestedCategory,\n    categoryUpdated: suggestedCategory !== category,\n    isAnomaly,\n    severity,\n    logId: payload.logId,\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "name": "Analyze & Categorize Transaction",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.isAnomaly }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "Check If Anomaly",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:3001/api/automations/webhooks/inbound",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Webhook-Secret",
+              "value": "n8n_expense_tracker_secret_key_2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "create_notification"
+            },
+            {
+              "name": "userId",
+              "value": "={{ $json.userId }}"
+            },
+            {
+              "name": "logId",
+              "value": "={{ $json.logId }}"
+            },
+            {
+              "name": "data",
+              "value": "={{ { message: '⚠️ Unusual Expense Alert: ₹' + $json.amount + ' on \"' + $json.description + '\" (' + $json.suggestedCategory + ').', type: 'warning', category: 'anomaly', details: { transactionId: $json.transactionId, severity: $json.severity, actionRequired: true } } }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Dispatch Anomaly Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:3001/api/automations/webhooks/inbound",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Webhook-Secret",
+              "value": "n8n_expense_tracker_secret_key_2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "log_workflow_complete"
+            },
+            {
+              "name": "logId",
+              "value": "={{ $json.logId }}"
+            },
+            {
+              "name": "data",
+              "value": "={{ { summary: 'Processed transaction #' + $json.transactionId + ': Category ' + $json.suggestedCategory + ' (Normal)', status: 'success' } }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Log Standard Completion",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 400]
+    }
+  ],
+  "connections": {
+    "Webhook: Transaction Created": {
+      "main": [
+        [
+          {
+            "node": "Analyze & Categorize Transaction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze & Categorize Transaction": {
+      "main": [
+        [
+          {
+            "node": "Check If Anomaly",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Anomaly": {
+      "main": [
+        [
+          {
+            "node": "Dispatch Anomaly Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Standard Completion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

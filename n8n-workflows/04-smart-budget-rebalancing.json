@@ -1,0 +1,149 @@
+{
+  "name": "04 - Smart Budget Rebalancing",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "budget-rebalance",
+        "options": {}
+      },
+      "name": "Webhook: Rebalance Check",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const payload = $input.first().json;\nconst userId = payload.userId;\nconst month = payload.data?.month || new Date().toISOString().slice(0, 7);\n\nreturn [{\n  json: {\n    userId,\n    month,\n    logId: payload.logId\n  }\n}];"
+      },
+      "name": "Extract Params",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=http://localhost:3001/api/budgets",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Webhook-Secret",
+              "value": "n8n_expense_tracker_secret_key_2026"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Fetch Current Budgets",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const budgets = $input.first().json;\nconst prev = $('Extract Params').first().json;\n\nif (!Array.isArray(budgets) || budgets.length < 2) {\n  return [];\n}\n\n// Find overspending and underspending\nconst analyzed = budgets.map(b => {\n  const limit = b.limitAmount || 0;\n  const spent = b.spentAmount || 0;\n  const util = limit > 0 ? (spent / limit) * 100 : 0;\n  const remaining = Math.max(0, limit - spent);\n  return { category: b.category, limit, spent, util, remaining };\n});\n\nconst over = analyzed.filter(b => b.util >= 85).sort((a, b) => b.util - a.util);\nconst under = analyzed.filter(b => b.util <= 50 && b.remaining >= 500).sort((a, b) => b.remaining - a.remaining);\n\nif (over.length > 0 && under.length > 0) {\n  const target = over[0];\n  const source = under[0];\n  const reallocate = Math.min(Math.round(source.remaining * 0.5), Math.max(500, Math.round(target.spent - target.limit * 0.8)));\n\n  return [{\n    json: {\n      userId: prev.userId,\n      month: prev.month,\n      sourceCategory: source.category,\n      targetCategory: target.category,\n      reallocateAmount: reallocate,\n      sourceCurrentBudget: source.limit,\n      targetCurrentBudget: target.limit,\n      reason: `${target.category} spending is at ${Math.round(target.util)}% of limit. You have ₹${source.remaining.toLocaleString()} remaining in ${source.category}. Reallocating ₹${reallocate.toLocaleString()} prevents budget overrun.`,\n      aiConfidence: 0.94,\n      logId: prev.logId\n    }\n  }];\n}\n\nreturn [];"
+      },
+      "name": "Analyze Surplus/Deficit & Formulate Recommendation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [840, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:3001/api/automations/webhooks/inbound",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Webhook-Secret",
+              "value": "n8n_expense_tracker_secret_key_2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "create_budget_recommendation"
+            },
+            {
+              "name": "userId",
+              "value": "={{ $json.userId }}"
+            },
+            {
+              "name": "logId",
+              "value": "={{ $json.logId }}"
+            },
+            {
+              "name": "data",
+              "value": "={{ { month: $json.month, sourceCategory: $json.sourceCategory, targetCategory: $json.targetCategory, reallocateAmount: $json.reallocateAmount, reason: $json.reason, aiConfidence: $json.aiConfidence } }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Submit Budget Recommendation",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1060, 300]
+    }
+  ],
+  "connections": {
+    "Webhook: Rebalance Check": {
+      "main": [
+        [
+          {
+            "node": "Extract Params",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Params": {
+      "main": [
+        [
+          {
+            "node": "Fetch Current Budgets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Current Budgets": {
+      "main": [
+        [
+          {
+            "node": "Analyze Surplus/Deficit & Formulate Recommendation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Surplus/Deficit & Formulate Recommendation": {
+      "main": [
+        [
+          {
+            "node": "Submit Budget Recommendation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "name": "09 - Notification Dispatcher",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "notification-dispatch",
+        "options": {}
+      },
+      "name": "Webhook: Dispatch Notification",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const payload = $input.first().json;\nconst data = payload.data || payload;\nconst message = data.message || 'Notification';\nconst type = data.type || 'info';\nconst category = data.category || 'general';\nconst userId = payload.userId || data.userId;\nconst emailTo = data.emailTo || null;\nconst channels = data.channels || { in_app: true, email: !!emailTo, voice: false };\n\nreturn [{\n  json: {\n    userId,\n    message,\n    type,\n    category,\n    emailTo,\n    channels,\n    details: data.details || {},\n    logId: payload.logId,\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "name": "Normalize & Check Channels",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:3001/api/automations/webhooks/inbound",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Webhook-Secret",
+              "value": "n8n_expense_tracker_secret_key_2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "create_notification"
+            },
+            {
+              "name": "userId",
+              "value": "={{ $json.userId }}"
+            },
+            {
+              "name": "logId",
+              "value": "={{ $json.logId }}"
+            },
+            {
+              "name": "data",
+              "value": "={{ { message: $json.message, type: $json.type, category: $json.category, details: $json.details } }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Save In-App Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 300]
+    }
+  ],
+  "connections": {
+    "Webhook: Dispatch Notification": {
+      "main": [
+        [
+          {
+            "node": "Normalize & Check Channels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize & Check Channels": {
+      "main": [
+        [
+          {
+            "node": "Save In-App Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

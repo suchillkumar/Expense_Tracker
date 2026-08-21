@@ -1,0 +1,98 @@
+{
+  "name": "07 - Anomaly Response & Hold Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "anomaly-detected",
+        "options": {}
+      },
+      "name": "Webhook: Anomaly Detected",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const payload = $input.first().json;\nconst data = payload.data || payload;\nconst amount = parseFloat(data.amount || 0);\nconst expected = parseFloat(data.expected || 0);\nconst description = data.description || 'Expense';\nconst severity = data.severity || (amount > 20000 ? 'high' : 'medium');\nconst zScore = data.zScore || (severity === 'high' ? 3.5 : 2.2);\nconst userId = payload.userId || data.userId;\nconst txId = payload.referenceId || data.transactionId;\n\n// Generate plain-English explanation\nconst ratio = expected > 0 ? (amount / expected).toFixed(1) : '3x';\nconst explanation = `Spending of ₹${amount.toLocaleString()} is ${ratio} times higher than your usual average of ₹${expected.toLocaleString()}.`;\n\nreturn [{\n  json: {\n    userId,\n    transactionId: txId,\n    description,\n    amount,\n    expected,\n    severity,\n    zScore,\n    explanation,\n    requiresHold: severity === 'high',\n    logId: payload.logId,\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "name": "Analyze Severity & Formulate Explanation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:3001/api/automations/webhooks/inbound",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Webhook-Secret",
+              "value": "n8n_expense_tracker_secret_key_2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "create_notification"
+            },
+            {
+              "name": "userId",
+              "value": "={{ $json.userId }}"
+            },
+            {
+              "name": "logId",
+              "value": "={{ $json.logId }}"
+            },
+            {
+              "name": "data",
+              "value": "={{ { message: '⚠️ ' + $json.severity.toUpperCase() + ' Anomaly Detected: ₹' + $json.amount + ' on \"' + $json.description + '\". ' + $json.explanation, type: 'warning', category: 'anomaly', details: { transactionId: $json.transactionId, severity: $json.severity, expected: $json.expected, zScore: $json.zScore, explanation: $json.explanation, actionRequired: true, actions: ['confirm', 'mark_expected', 'ignore'] } } }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Dispatch Interactive Anomaly Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 300]
+    }
+  ],
+  "connections": {
+    "Webhook: Anomaly Detected": {
+      "main": [
+        [
+          {
+            "node": "Analyze Severity & Formulate Explanation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Severity & Formulate Explanation": {
+      "main": [
+        [
+          {
+            "node": "Dispatch Interactive Anomaly Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

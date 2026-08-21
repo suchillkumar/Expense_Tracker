@@ -1,0 +1,152 @@
+{
+  "name": "06 - Debt Payment Reminder",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 24
+            }
+          ]
+        }
+      },
+      "name": "Schedule: Daily Check 10:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [220, 240]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "debt-reminder",
+        "options": {}
+      },
+      "name": "Webhook: Manual Debt Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [220, 420]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://localhost:3001/api/automations/debts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Webhook-Secret",
+              "value": "n8n_expense_tracker_secret_key_2026"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Fetch Active Debts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "const debts = $input.first().json;\nconst now = new Date();\nconst reminders = [];\n\nif (Array.isArray(debts)) {\n  for (const debt of debts) {\n    if (debt.status === 'settled') continue;\n    const due = new Date(debt.dueDate || debt.due_date);\n    const diffMs = due.getTime() - now.getTime();\n    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));\n\n    if (diffDays <= 7) {\n      const isOverdue = diffDays < 0;\n      const minDue = debt.minimumPayment || debt.minimum_payment || debt.remainingBalance || debt.remaining_balance;\n      const msg = isOverdue\n        ? `⚠️ Overdue Debt Alert: \"${debt.title}\" is ${Math.abs(diffDays)} days overdue! Minimum due: ₹${minDue.toLocaleString()}.`\n        : `💳 Debt Payment Reminder: \"${debt.title}\" due in ${diffDays} days. Minimum due: ₹${minDue.toLocaleString()}.`;\n\n      reminders.push({\n        debtId: debt.id || debt._id,\n        userId: debt.userId || debt.user_id,\n        title: debt.title,\n        remainingBalance: debt.remainingBalance || debt.remaining_balance,\n        diffDays,\n        message: msg,\n        type: isOverdue ? 'alert' : 'warning'\n      });\n    }\n  }\n}\n\nreturn reminders.map(r => ({ json: r }));"
+      },
+      "name": "Analyze Due Dates & Minimum Payments",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 320]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:3001/api/automations/webhooks/inbound",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Webhook-Secret",
+              "value": "n8n_expense_tracker_secret_key_2026"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "create_notification"
+            },
+            {
+              "name": "userId",
+              "value": "={{ $json.userId }}"
+            },
+            {
+              "name": "data",
+              "value": "={{ { message: $json.message, type: $json.type, category: 'debt', details: { debtId: $json.debtId, remaining: $json.remainingBalance, diffDays: $json.diffDays } } }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Send Debt Alert Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 320]
+    }
+  ],
+  "connections": {
+    "Schedule: Daily Check 10:00": {
+      "main": [
+        [
+          {
+            "node": "Fetch Active Debts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook: Manual Debt Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch Active Debts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Active Debts": {
+      "main": [
+        [
+          {
+            "node": "Analyze Due Dates & Minimum Payments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Due Dates & Minimum Payments": {
+      "main": [
+        [
+          {
+            "node": "Send Debt Alert Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

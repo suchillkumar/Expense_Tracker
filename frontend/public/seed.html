@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<body>
+<script>
+  const params = new URLSearchParams(window.location.search)
+  const view = params.get('view') || 'dashboard'
+  const now = new Date()
+  const iso = (offsetDays) => new Date(now.getTime() - offsetDays * 86400000).toISOString()
+  const month = now.toISOString().slice(0, 7)
+
+  const db = {
+    users: [{ id: 'u1', name: 'Demo User', email: 'demo@test.com', password: 'demo123' }],
+    accounts: [
+      { id: 'a1', name: 'Main Wallet', balance: 5000, currency: 'USD', color: '#2563eb' },
+      { id: 'a2', name: 'Bank', balance: 12500, currency: 'USD', color: '#16a34a' }
+    ],
+    transactions: [
+      { id: 't1', description: 'Groceries', amount: 85, type: 'expense', category: 'Food', accountId: 'a1', date: iso(0), recurrence: 'none' },
+      { id: 't2', description: 'Salary', amount: 3000, type: 'income', category: 'Salary', accountId: 'a2', date: iso(1), recurrence: 'monthly' },
+      { id: 't3', description: 'Uber ride', amount: 42, type: 'expense', category: 'Transport', accountId: 'a1', date: iso(1), recurrence: 'none' },
+      { id: 't4', description: 'Netflix', amount: 15, type: 'expense', category: 'Bills', accountId: 'a1', date: iso(2), recurrence: 'monthly' },
+      { id: 't5', description: 'Big laptop purchase', amount: 1800, type: 'expense', category: 'Shopping', accountId: 'a1', date: iso(0), recurrence: 'none' },
+      { id: 't6', description: 'Old expense', amount: 120, type: 'expense', category: 'Food', accountId: 'a1', date: iso(45), recurrence: 'none' },
+      { id: 't7', description: 'Old expense 2', amount: 200, type: 'expense', category: 'Travel', accountId: 'a1', date: iso(40), recurrence: 'none' }
+    ],
+    budgets: [
+      { id: 'b1', category: 'Food', limit: 400, spent: 85, month },
+      { id: 'b2', category: 'Bills', limit: 100, spent: 15, month }
+    ],
+    groups: [
+      { id: 'g1', name: 'Trip to Goa', members: [
+        { userId: 'u1', name: 'Demo User' },
+        { userId: 'u2', name: 'Alex' },
+        { userId: 'u3', name: 'Sam' }
+      ], createdAt: iso(0) }
+    ],
+    groupExpenses: [
+      { id: 'ge1', groupId: 'g1', description: 'Hotel night', amount: 300, paidBy: 'u1', splits: [
+        { userId: 'u1', name: 'Demo User', amount: 100, paid: true },
+        { userId: 'u2', name: 'Alex', amount: 100, paid: false },
+        { userId: 'u3', name: 'Sam', amount: 100, paid: false }
+      ], date: iso(0) }
+    ],
+    notifications: [
+      { id: 'n1', message: 'Budget exceeded for Food', date: iso(0), read: false, type: 'alert' }
+    ],
+    settings: { baseCurrency: 'USD', userName: 'Demo User', email: 'demo@test.com' }
+  }
+  localStorage.setItem('expense_tracker_db', JSON.stringify(db))
+  localStorage.setItem('expense_tracker_session', JSON.stringify({ userId: 'u1', token: 'tok' }))
+  window.location.replace('/?view=' + view)
+</script>
+</body>
+</html>
