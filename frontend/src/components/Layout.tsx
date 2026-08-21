@@ -44,9 +44,9 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0F172A] text-[#1E293B] dark:text-[#F8FAFC] flex flex-col selection:bg-blue-500 selection:text-white transition-colors duration-200">
+    <div className="min-h-screen bg-white dark:bg-[#090D16] text-[#0F172A] dark:text-[#FFFFFF] flex flex-col selection:bg-blue-500 selection:text-white transition-colors duration-200">
       {/* Top Bar for Desktop and Mobile */}
-      <header className="h-16 bg-white dark:bg-[#111827] border-b border-[#E2E8F0] dark:border-[#334155] sticky top-0 z-40 px-4 sm:px-6 flex items-center justify-between transition-colors">
+      <header className="h-16 bg-white dark:bg-[#090D16] border-b border-[#E2E8F0] dark:border-[#1F2937] sticky top-0 z-40 px-4 sm:px-6 flex items-center justify-between transition-colors">
         {/* Left Side: Mobile Menu Button & Brand */}
         <div className="flex items-center gap-3">
           <button
@@ -167,7 +167,7 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
         {/* Desktop Sidebar */}
         <aside
           style={{ width: `${sidebarW}px` }}
-          className="hidden lg:flex flex-col justify-between bg-white dark:bg-[#111827] border-r border-[#E2E8F0] dark:border-[#334155] sticky top-16 h-[calc(100vh-4rem)] p-3.5 transition-all duration-200 z-30"
+          className="hidden lg:flex flex-col justify-between bg-white dark:bg-[#090D16] border-r border-[#E2E8F0] dark:border-[#1F2937] sticky top-16 h-[calc(100vh-4rem)] p-3.5 transition-all duration-200 z-30"
         >
           {/* Nav List */}
           <div className="space-y-1">
@@ -179,8 +179,8 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
                   onClick={() => handleNavClick(item.key)}
                   className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                     isActive
-                      ? 'bg-blue-50 text-[#2563EB] dark:bg-blue-950/50 dark:text-[#60A5FA] font-semibold shadow-xs border-l-3 border-[#2563EB] dark:border-[#3B82F6]'
-                      : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC] hover:bg-slate-50 dark:hover:bg-[#1E293B]'
+                      ? 'bg-slate-100 text-[#0F172A] dark:bg-[#1E293B] dark:text-[#FFFFFF] font-semibold shadow-xs border-l-3 border-[#0F172A] dark:border-[#3B82F6]'
+                      : 'text-[#64748B] hover:text-[#0F172A] dark:text-[#94A3B8] dark:hover:text-[#FFFFFF] hover:bg-slate-50 dark:hover:bg-[#1E293B]'
                   }`}
                 >
                   <span className="text-base shrink-0">{item.icon}</span>
@@ -191,7 +191,7 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
           </div>
 
           {/* Bottom Actions: Collapse Toggle & Logout */}
-          <div className="space-y-1 pt-3 border-t border-[#E2E8F0] dark:border-[#334155]">
+          <div className="space-y-1 pt-3 border-t border-[#E2E8F0] dark:border-[#1F2937]">
             <button
               onClick={() => setCollapsed(!collapsed)}
               className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-sm font-medium text-[#64748B] dark:text-[#94A3B8] hover:bg-slate-100 dark:hover:bg-[#1E293B] transition-colors"
@@ -219,10 +219,10 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
           >
             <div
               onClick={(e) => e.stopPropagation()}
-              className="w-72 max-w-[80vw] h-full bg-white dark:bg-[#111827] shadow-2xl p-5 flex flex-col justify-between border-r border-[#E2E8F0] dark:border-[#334155]"
+              className="w-72 max-w-[80vw] h-full bg-white dark:bg-[#090D16] shadow-2xl p-5 flex flex-col justify-between border-r border-[#E2E8F0] dark:border-[#1F2937]"
             >
               <div>
-                <div className="flex items-center justify-between pb-4 border-b border-[#E2E8F0] dark:border-[#334155] mb-4">
+                <div className="flex items-center justify-between pb-4 border-b border-[#E2E8F0] dark:border-[#1F2937] mb-4">
                   <Logo size="md" />
                   <button
                     onClick={() => setMobileOpen(false)}
