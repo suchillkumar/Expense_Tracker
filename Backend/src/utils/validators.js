@@ -48,17 +48,24 @@ export const updateProfileSchema = z.object({
   monthlyIncome: z.number().nonnegative().optional(),
   preferred_currency: z.string().max(10).optional(),
   preferredCurrency: z.string().max(10).optional(),
+  preferred_budget_period: z.string().max(20).optional(),
+  preferredBudgetPeriod: z.string().max(20).optional(),
   monthly_savings_goal: z.number().nonnegative().optional(),
   monthlySavingsGoal: z.number().nonnegative().optional(),
   financial_goal: z.string().max(100).optional(),
   financialGoal: z.string().max(100).optional(),
   timezone: z.string().max(100).optional(),
+  theme: z.string().max(20).optional(),
 })
 
 
 export const changePasswordSchema = z.object({
-  current_password: z.string().min(1),
-  new_password: z.string().min(8).max(100),
+  current_password: z.string().min(1).optional(),
+  currentPassword: z.string().min(1).optional(),
+  new_password: z.string().min(8).max(100).optional(),
+  newPassword: z.string().min(8).max(100).optional(),
+}).refine(data => (data.current_password || data.currentPassword) && (data.new_password || data.newPassword), {
+  message: 'Current password and new password are required'
 })
 
 

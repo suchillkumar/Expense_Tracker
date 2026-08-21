@@ -255,14 +255,48 @@ export const api = {
   },
 
   async updateUser(updates: Partial<User>): Promise<User | null> {
-    return request<User>('/auth/profile', { method: 'PATCH', body: updates })
+    try {
+      const res = await request<User>('/auth/profile', { method: 'PATCH', body: updates })
+      return res
+    } catch (err) {
+      if (!isNetworkError(err)) throw err
+      const session = getSession()
+      if (session?.token?.startsWith(LOCAL_TOKEN_PREFIX)) {
+        const userId = session.token.slice(LOCAL_TOKEN_PREFIX.length)
+        const users = getLocalUsers()
+        const idx = users.findIndex(u => u.id === userId)
+        if (idx >= 0) {
+          users[idx] = { ...users[idx], ...updates }
+          saveLocalUsers(users)
+          return users[idx]
+        }
+      }
+      return null
+    }
   },
 
   async changePassword(currentPassword: string, newPassword: string): Promise<void> {
-    await request<void>('/auth/password', {
-      method: 'PATCH',
-      body: { currentPassword, newPassword }
-    })
+    try {
+      await request<void>('/auth/password', {
+        method: 'PATCH',
+        body: { currentPassword, newPassword }
+      })
+    } catch (err) {
+      if (!isNetworkError(err)) throw err
+      const session = getSession()
+      if (session?.token?.startsWith(LOCAL_TOKEN_PREFIX)) {
+        const userId = session.token.slice(LOCAL_TOKEN_PREFIX.length)
+        const users = getLocalUsers()
+        const u = users.find(user => user.id === userId)
+        if (!u || u.password !== currentPassword) {
+          throw new Error('Current password is incorrect')
+        }
+        u.password = newPassword
+        saveLocalUsers(users)
+        return
+      }
+      throw err
+    }
   },
 
   async forgotPassword(email: string): Promise<{ message: string; token?: string }> {

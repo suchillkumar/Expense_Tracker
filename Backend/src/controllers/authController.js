@@ -228,14 +228,28 @@ export const updateProfile = asyncHandler(async (req, res) => {
   if (updates.name) setFields.name = updates.name.trim()
   if (updates.email) setFields.email = updates.email.toLowerCase().trim()
   if (updates.phone !== undefined) setFields.phone = updates.phone.trim()
-  if (updates.avatar_url !== undefined) setFields.avatar_url = updates.avatar_url
+  if (updates.avatar_url !== undefined || updates.avatarUrl !== undefined) {
+    setFields.avatar_url = updates.avatar_url ?? updates.avatarUrl
+  }
   if (updates.age !== undefined) setFields.age = updates.age
   if (updates.occupation !== undefined) setFields.occupation = updates.occupation
-  if (updates.monthly_income !== undefined) setFields.monthly_income = updates.monthly_income
-  if (updates.preferred_currency) setFields.preferred_currency = updates.preferred_currency
-  if (updates.monthly_savings_goal !== undefined) setFields.monthly_savings_goal = updates.monthly_savings_goal
-  if (updates.financial_goal !== undefined) setFields.financial_goal = updates.financial_goal
+  if (updates.monthly_income !== undefined || updates.monthlyIncome !== undefined) {
+    setFields.monthly_income = updates.monthly_income ?? updates.monthlyIncome
+  }
+  if (updates.preferred_currency || updates.preferredCurrency) {
+    setFields.preferred_currency = updates.preferred_currency ?? updates.preferredCurrency
+  }
+  if (updates.preferred_budget_period || updates.preferredBudgetPeriod) {
+    setFields.preferred_budget_period = updates.preferred_budget_period ?? updates.preferredBudgetPeriod
+  }
+  if (updates.monthly_savings_goal !== undefined || updates.monthlySavingsGoal !== undefined) {
+    setFields.monthly_savings_goal = updates.monthly_savings_goal ?? updates.monthlySavingsGoal
+  }
+  if (updates.financial_goal !== undefined || updates.financialGoal !== undefined) {
+    setFields.financial_goal = updates.financial_goal ?? updates.financialGoal
+  }
   if (updates.timezone) setFields.timezone = updates.timezone
+  if (updates.theme) setFields.theme = updates.theme
 
   if (Object.keys(setFields).length === 0) {
     const u = await User.findById(req.user.id)
@@ -247,7 +261,10 @@ export const updateProfile = asyncHandler(async (req, res) => {
 })
 
 export const changePassword = asyncHandler(async (req, res) => {
-  const { current_password, new_password } = changePasswordSchema.parse(req.body)
+  const data = changePasswordSchema.parse(req.body)
+  const current_password = data.current_password || data.currentPassword
+  const new_password = data.new_password || data.newPassword
+
   const user = await User.findById(req.user.id)
   const valid = await bcrypt.compare(current_password, user.password_hash)
   if (!valid) throw new AppError('Current password is incorrect', 400, 'INVALID_CURRENT_PASSWORD')
