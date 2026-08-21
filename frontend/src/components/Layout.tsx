@@ -44,14 +44,14 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#0B0F19] text-[#0F172A] dark:text-slate-100 flex flex-col selection:bg-blue-500 selection:text-white transition-colors duration-200">
+    <div className="min-h-screen bg-white dark:bg-[#000000] text-[#0F172A] dark:text-[#FFFFFF] flex flex-col selection:bg-blue-500 selection:text-white transition-colors duration-200">
       {/* Top Bar for Desktop and Mobile */}
-      <header className="h-16 bg-white dark:bg-[#0F172A] border-b border-[#E2E8F0] dark:border-slate-800/80 sticky top-0 z-40 px-4 sm:px-6 flex items-center justify-between transition-colors">
+      <header className="h-16 bg-white dark:bg-[#0A0A0A] border-b border-[#E2E8F0] dark:border-[#222222] sticky top-0 z-40 px-4 sm:px-6 flex items-center justify-between transition-colors">
         {/* Left Side: Mobile Menu Button & Brand */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden p-2 rounded-xl text-[#64748B] hover:bg-[#F8FAFC] dark:hover:bg-slate-800 transition-colors"
+            className="lg:hidden p-2 rounded-xl text-[#64748B] hover:bg-slate-50 dark:hover:bg-[#18181B] transition-colors"
             aria-label="Toggle menu"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -71,7 +71,7 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
                 setNotifPanelOpen(!notifPanelOpen)
                 if (!notifPanelOpen) markNotificationsRead()
               }}
-              className="relative p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] dark:text-slate-400 dark:hover:text-white hover:bg-[#F8FAFC] dark:hover:bg-slate-800 transition-colors"
+              className="relative p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#18181B] transition-colors"
               title="Notifications"
             >
               <span className="text-base">🔔</span>
@@ -83,8 +83,8 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
             </button>
 
             {notifPanelOpen && (
-              <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-[#0F172A] rounded-2xl shadow-2xl border border-[#E2E8F0] dark:border-slate-800 py-3 z-50 animate-fade-in">
-                <div className="flex items-center justify-between px-4 pb-2 border-b border-[#E2E8F0] dark:border-slate-800">
+              <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-[#121212] rounded-2xl shadow-2xl border border-[#E2E8F0] dark:border-[#262626] py-3 z-50 animate-fade-in">
+                <div className="flex items-center justify-between px-4 pb-2 border-b border-[#E2E8F0] dark:border-[#262626]">
                   <h4 className="text-xs font-bold text-[#0F172A] dark:text-white flex items-center gap-1.5">
                     <span>Notifications</span>
                     <span className="text-[10px] bg-blue-50 dark:bg-blue-950/60 text-[#2563EB] dark:text-blue-400 px-1.5 py-0.5 rounded-full font-bold">
@@ -99,9 +99,9 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
                   </button>
                 </div>
 
-                <div className="max-h-72 overflow-y-auto divide-y divide-[#E2E8F0] dark:divide-slate-800">
+                <div className="max-h-72 overflow-y-auto divide-y divide-[#E2E8F0] dark:divide-[#262626]">
                   {notifications.length === 0 ? (
-                    <div className="p-6 text-center text-xs text-[#64748B] dark:text-slate-400">
+                    <div className="p-6 text-center text-xs text-[#64748B] dark:text-zinc-400">
                       <span>✨ All caught up! No new alerts.</span>
                     </div>
                   ) : (
@@ -119,8 +119,8 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
                           <p className="text-xs font-semibold text-[#0F172A] dark:text-white leading-snug">
                             {n.title || n.message}
                           </p>
-                          {n.title && <p className="text-[11px] text-[#64748B] dark:text-slate-400 mt-0.5">{n.message}</p>}
-                          <span className="text-[9px] text-[#64748B] dark:text-slate-500 mt-1 block">
+                          {n.title && <p className="text-[11px] text-[#64748B] dark:text-zinc-400 mt-0.5">{n.message}</p>}
+                          <span className="text-[9px] text-[#64748B] dark:text-zinc-500 mt-1 block">
                             {new Date(n.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </span>
                         </div>
@@ -135,8 +135,8 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
           {/* Dark / Light Mode Toggle Pill */}
           <button
             onClick={toggleTheme}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 text-[#0F172A] dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 shadow-xs transition-all text-xs font-bold"
-            title={isDark ? 'Switch to Light mode' : 'Switch to Dark mode'}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-[#262626] bg-slate-50 dark:bg-[#18181B] text-[#0F172A] dark:text-white hover:bg-slate-100 dark:hover:bg-[#222222] shadow-xs transition-all text-xs font-bold"
+            title={isDark ? 'Switch to Light mode (White)' : 'Switch to Dark mode (Black)'}
           >
             <span className="text-sm">{isDark ? '☀️' : '🌙'}</span>
             <span className="hidden sm:inline text-[11px] font-semibold">{isDark ? 'Light' : 'Dark'}</span>
@@ -145,7 +145,7 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
           {/* User Profile Pill */}
           <button
             onClick={() => onNavigate('profile')}
-            className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl hover:bg-[#F8FAFC] dark:hover:bg-slate-800 transition-colors border border-[#E2E8F0] dark:border-slate-800 text-left"
+            className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl hover:bg-slate-50 dark:hover:bg-[#18181B] transition-colors border border-[#E2E8F0] dark:border-[#222222] text-left"
           >
             <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-[#2563EB] to-[#7C3AED] text-white flex items-center justify-center text-xs font-black shadow-xs">
               {user?.name ? user.name[0].toUpperCase() : 'U'}
@@ -154,7 +154,7 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
               <p className="text-xs font-bold text-[#0F172A] dark:text-white truncate max-w-[100px]">
                 {user?.name || 'My Account'}
               </p>
-              <p className="text-[10px] text-[#64748B] dark:text-slate-400 mt-0.5">
+              <p className="text-[10px] text-[#64748B] dark:text-zinc-400 mt-0.5">
                 {user?.preferredCurrency || 'INR'}
               </p>
             </div>
@@ -167,7 +167,7 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
         {/* Desktop Sidebar */}
         <aside
           style={{ width: `${sidebarW}px` }}
-          className="hidden lg:flex flex-col justify-between bg-white dark:bg-[#0F172A] border-r border-[#E2E8F0] dark:border-slate-800/80 sticky top-16 h-[calc(100vh-4rem)] p-3.5 transition-all duration-200 z-30"
+          className="hidden lg:flex flex-col justify-between bg-white dark:bg-[#0A0A0A] border-r border-[#E2E8F0] dark:border-[#222222] sticky top-16 h-[calc(100vh-4rem)] p-3.5 transition-all duration-200 z-30"
         >
           {/* Nav List */}
           <div className="space-y-1">
@@ -179,8 +179,8 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
                   onClick={() => handleNavClick(item.key)}
                   className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
                     isActive
-                      ? 'bg-blue-50 text-[#2563EB] dark:bg-blue-950/50 dark:text-blue-400 font-bold shadow-xs border-l-3 border-[#2563EB]'
-                      : 'text-[#64748B] hover:text-[#0F172A] dark:text-slate-400 dark:hover:text-slate-200 hover:bg-[#F8FAFC] dark:hover:bg-slate-800/60'
+                      ? 'bg-blue-50 text-[#2563EB] dark:bg-blue-950/40 dark:text-blue-400 font-bold shadow-xs border-l-3 border-[#2563EB]'
+                      : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#18181B]'
                   }`}
                 >
                   <span className="text-base shrink-0">{item.icon}</span>
@@ -191,10 +191,10 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
           </div>
 
           {/* Bottom Actions: Collapse Toggle & Logout */}
-          <div className="space-y-1 pt-3 border-t border-[#E2E8F0] dark:border-slate-800">
+          <div className="space-y-1 pt-3 border-t border-[#E2E8F0] dark:border-[#222222]">
             <button
               onClick={() => setCollapsed(!collapsed)}
-              className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs text-[#64748B] hover:bg-[#F8FAFC] dark:hover:bg-slate-800 transition-colors"
+              className="w-full flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs text-[#64748B] dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-[#18181B] transition-colors"
               title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
               <span className="text-sm">{collapsed ? '→' : '←'}</span>
@@ -215,18 +215,18 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
         {mobileOpen && (
           <div
             onClick={() => setMobileOpen(false)}
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 lg:hidden animate-fade-in"
+            className="fixed inset-0 bg-black/70 backdrop-blur-xs z-50 lg:hidden animate-fade-in"
           >
             <div
               onClick={(e) => e.stopPropagation()}
-              className="w-72 max-w-[80vw] h-full bg-white dark:bg-[#0F172A] shadow-2xl p-5 flex flex-col justify-between border-r border-[#E2E8F0] dark:border-slate-800"
+              className="w-72 max-w-[80vw] h-full bg-white dark:bg-[#0A0A0A] shadow-2xl p-5 flex flex-col justify-between border-r border-[#E2E8F0] dark:border-[#222222]"
             >
               <div>
-                <div className="flex items-center justify-between pb-4 border-b border-[#E2E8F0] dark:border-slate-800 mb-4">
+                <div className="flex items-center justify-between pb-4 border-b border-[#E2E8F0] dark:border-[#222222] mb-4">
                   <Logo size="md" />
                   <button
                     onClick={() => setMobileOpen(false)}
-                    className="p-1.5 rounded-lg text-[#64748B] hover:bg-[#F8FAFC] dark:hover:bg-slate-800"
+                    className="p-1.5 rounded-lg text-[#64748B] hover:bg-slate-50 dark:hover:bg-[#18181B]"
                   >
                     ✕
                   </button>
@@ -241,8 +241,8 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
                         onClick={() => handleNavClick(item.key)}
                         className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
                           isActive
-                            ? 'bg-blue-50 text-[#2563EB] dark:bg-blue-950/50 dark:text-blue-400 font-bold'
-                            : 'text-[#64748B] dark:text-slate-400 hover:bg-[#F8FAFC] dark:hover:bg-slate-800'
+                            ? 'bg-blue-50 text-[#2563EB] dark:bg-blue-950/40 dark:text-blue-400 font-bold'
+                            : 'text-[#64748B] dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-[#18181B]'
                         }`}
                       >
                         <span className="text-base">{item.icon}</span>
@@ -253,7 +253,7 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-[#E2E8F0] dark:border-slate-800">
+              <div className="pt-4 border-t border-[#E2E8F0] dark:border-[#222222]">
                 <button
                   onClick={() => {
                     setMobileOpen(false)
@@ -276,7 +276,7 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
       </div>
 
       {/* Mobile Bottom Navigation Bar */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-white dark:bg-[#0F172A] border-t border-[#E2E8F0] dark:border-slate-800/80 flex items-center justify-around px-2 z-40 shadow-lg">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 h-16 bg-white dark:bg-[#0A0A0A] border-t border-[#E2E8F0] dark:border-[#222222] flex items-center justify-around px-2 z-40 shadow-lg">
         {NAV_ITEMS.slice(0, 5).map((item) => {
           const isActive = active === item.key
           return (
@@ -286,7 +286,7 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
               className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
                 isActive
                   ? 'text-[#2563EB] dark:text-blue-400 font-bold'
-                  : 'text-[#64748B] dark:text-slate-400 hover:text-[#0F172A]'
+                  : 'text-[#64748B] dark:text-zinc-400 hover:text-[#0F172A]'
               }`}
             >
               <span className="text-base">{item.icon}</span>
@@ -298,19 +298,19 @@ export function Layout({ children, active, onNavigate }: LayoutProps) {
 
       {/* Logout Confirmation Modal Dialog */}
       {logoutModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white dark:bg-[#0F172A] rounded-3xl p-6 max-w-sm w-full border border-[#E2E8F0] dark:border-slate-800 shadow-2xl animate-fade-in-up">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white dark:bg-[#121212] rounded-3xl p-6 max-w-sm w-full border border-[#E2E8F0] dark:border-[#262626] shadow-2xl animate-fade-in-up">
             <div className="w-12 h-12 rounded-2xl bg-red-50 dark:bg-red-950/50 text-[#EF4444] flex items-center justify-center text-xl mb-4">
               🚪
             </div>
-            <h3 className="text-base font-bold text-[#0F172A] dark:text-white">Sign Out of SpendWise AI?</h3>
-            <p className="text-xs text-[#64748B] dark:text-slate-400 mt-1.5 leading-relaxed">
+            <h3 className="text-base font-bold text-[#0F172A] dark:text-white">Sign Out of Expense Tracker?</h3>
+            <p className="text-xs text-[#64748B] dark:text-zinc-400 mt-1.5 leading-relaxed">
               Your financial session will be safely closed. You can sign back in at any time.
             </p>
             <div className="grid grid-cols-2 gap-2.5 mt-6">
               <button
                 onClick={() => setLogoutModalOpen(false)}
-                className="py-2.5 px-4 rounded-xl border border-[#E2E8F0] dark:border-slate-700 text-xs font-bold text-[#64748B] hover:bg-[#F8FAFC] dark:hover:bg-slate-800 transition-colors"
+                className="py-2.5 px-4 rounded-xl border border-[#E2E8F0] dark:border-[#262626] text-xs font-bold text-[#64748B] dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-[#18181B] transition-colors"
               >
                 Cancel
               </button>

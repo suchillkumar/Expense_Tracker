@@ -205,14 +205,14 @@ export function TransactionList({ limit }: TransactionListProps) {
       {/* 2. Tabs + Filter Toolbar */}
       <div className="fintech-card p-5 space-y-4">
         {/* Type Tabs */}
-        <div className="flex items-center justify-between flex-wrap gap-3 border-b border-[#E2E8F0] dark:border-slate-800 pb-4">
-          <div className="flex items-center bg-[#F8FAFC] dark:bg-slate-800 p-1 rounded-xl gap-1 border border-[#E2E8F0] dark:border-slate-700">
+        <div className="flex items-center justify-between flex-wrap gap-3 border-b border-[#E2E8F0] dark:border-[#262626] pb-4">
+          <div className="flex items-center bg-slate-100 dark:bg-[#18181B] p-1 rounded-xl gap-1 border border-[#E2E8F0] dark:border-[#262626]">
             <button
               onClick={() => { setTab('all'); setPage(1) }}
               className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 tab === 'all'
-                  ? 'bg-white dark:bg-[#0F172A] text-[#2563EB] dark:text-blue-400 shadow-xs'
-                  : 'text-[#64748B] hover:text-[#0F172A] dark:hover:text-slate-200'
+                  ? 'bg-white dark:bg-[#000000] text-[#2563EB] dark:text-blue-400 shadow-xs border border-transparent dark:border-[#262626]'
+                  : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
               }`}
             >
               All Transactions ({transactions.length})
@@ -221,8 +221,8 @@ export function TransactionList({ limit }: TransactionListProps) {
               onClick={() => { setTab('income'); setPage(1) }}
               className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 tab === 'income'
-                  ? 'bg-white dark:bg-[#0F172A] text-[#10B981] dark:text-emerald-400 shadow-xs'
-                  : 'text-[#64748B] hover:text-[#0F172A] dark:hover:text-slate-200'
+                  ? 'bg-white dark:bg-[#000000] text-[#10B981] dark:text-emerald-400 shadow-xs border border-transparent dark:border-[#262626]'
+                  : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
               }`}
             >
               Income ({transactions.filter((t) => t.type === 'income').length})
@@ -231,8 +231,8 @@ export function TransactionList({ limit }: TransactionListProps) {
               onClick={() => { setTab('expense'); setPage(1) }}
               className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 tab === 'expense'
-                  ? 'bg-white dark:bg-[#0F172A] text-[#EF4444] dark:text-red-400 shadow-xs'
-                  : 'text-[#64748B] hover:text-[#0F172A] dark:hover:text-slate-200'
+                  ? 'bg-white dark:bg-[#000000] text-[#EF4444] dark:text-red-400 shadow-xs border border-transparent dark:border-[#262626]'
+                  : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
               }`}
             >
               Expenses ({transactions.filter((t) => t.type === 'expense').length})
@@ -557,9 +557,9 @@ export function TransactionList({ limit }: TransactionListProps) {
 
       {/* Detail Modal */}
       {viewDetailsTx && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white dark:bg-[#0F172A] rounded-3xl p-6 max-w-md w-full border border-[#E2E8F0] dark:border-slate-800 shadow-2xl space-y-4 animate-fade-in-up">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0] dark:border-slate-800">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white dark:bg-[#121212] rounded-3xl p-6 max-w-md w-full border border-[#E2E8F0] dark:border-[#262626] shadow-2xl space-y-4 animate-fade-in-up">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0] dark:border-[#262626]">
               <div className="flex items-center gap-2.5">
                 <span className="text-xl">{CATEGORY_ICONS[viewDetailsTx.category] || '📦'}</span>
                 <h3 className="text-base font-bold text-[#0F172A] dark:text-white">Transaction Details</h3>

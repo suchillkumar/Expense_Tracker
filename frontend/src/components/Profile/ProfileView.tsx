@@ -162,13 +162,13 @@ export function ProfileView() {
       </div>
 
       {/* 2. Form Tabs */}
-      <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-xl gap-1 max-w-xl border border-[#E2E8F0] dark:border-slate-700">
+      <div className="flex items-center bg-slate-100 dark:bg-[#18181B] p-1.5 rounded-xl gap-1 max-w-xl border border-[#E2E8F0] dark:border-[#262626]">
         <button
           onClick={() => setTab('personal')}
           className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
             tab === 'personal'
-              ? 'bg-white dark:bg-[#0F172A] text-[#2563EB] dark:text-blue-400 shadow-xs'
-              : 'text-[#64748B] hover:text-[#0F172A] dark:text-slate-400'
+              ? 'bg-white dark:bg-[#000000] text-[#2563EB] dark:text-blue-400 shadow-xs border border-transparent dark:border-[#262626]'
+              : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
           }`}
         >
           Personal
@@ -177,8 +177,8 @@ export function ProfileView() {
           onClick={() => setTab('financial')}
           className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
             tab === 'financial'
-              ? 'bg-white dark:bg-[#0F172A] text-[#2563EB] dark:text-blue-400 shadow-xs'
-              : 'text-[#64748B] hover:text-[#0F172A] dark:text-slate-400'
+              ? 'bg-white dark:bg-[#000000] text-[#2563EB] dark:text-blue-400 shadow-xs border border-transparent dark:border-[#262626]'
+              : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
           }`}
         >
           Financial
@@ -187,8 +187,8 @@ export function ProfileView() {
           onClick={() => setTab('theme')}
           className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
             tab === 'theme'
-              ? 'bg-white dark:bg-[#0F172A] text-[#2563EB] dark:text-blue-400 shadow-xs'
-              : 'text-[#64748B] hover:text-[#0F172A] dark:text-slate-400'
+              ? 'bg-white dark:bg-[#000000] text-[#2563EB] dark:text-blue-400 shadow-xs border border-transparent dark:border-[#262626]'
+              : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
           }`}
         >
           Theme & Display
@@ -197,8 +197,8 @@ export function ProfileView() {
           onClick={() => setTab('security')}
           className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
             tab === 'security'
-              ? 'bg-white dark:bg-[#0F172A] text-[#2563EB] dark:text-blue-400 shadow-xs'
-              : 'text-[#64748B] hover:text-[#0F172A] dark:text-slate-400'
+              ? 'bg-white dark:bg-[#000000] text-[#2563EB] dark:text-blue-400 shadow-xs border border-transparent dark:border-[#262626]'
+              : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
           }`}
         >
           Security
@@ -404,7 +404,7 @@ export function ProfileView() {
               className={`cursor-pointer p-5 rounded-2xl border-2 transition-all space-y-3 ${
                 theme === 'light'
                   ? 'border-[#2563EB] bg-blue-50/50 dark:bg-blue-950/40 shadow-sm'
-                  : 'border-[#E2E8F0] dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900'
+                  : 'border-[#E2E8F0] dark:border-[#262626] hover:border-slate-300 dark:hover:border-zinc-700 bg-white dark:bg-[#18181B]'
               }`}
             >
               <div className="flex items-center justify-between">
@@ -417,7 +417,7 @@ export function ProfileView() {
               </div>
               <div>
                 <h4 className="text-sm font-bold text-[#0F172A] dark:text-white">Light Theme</h4>
-                <p className="text-xs text-[#64748B] dark:text-slate-400 mt-0.5">
+                <p className="text-xs text-[#64748B] dark:text-zinc-400 mt-0.5">
                   Crisp pure white aesthetic with high-contrast elements.
                 </p>
               </div>
@@ -433,7 +433,7 @@ export function ProfileView() {
               className={`cursor-pointer p-5 rounded-2xl border-2 transition-all space-y-3 ${
                 theme === 'dark'
                   ? 'border-[#2563EB] bg-blue-50/50 dark:bg-blue-950/40 shadow-sm'
-                  : 'border-[#E2E8F0] dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900'
+                  : 'border-[#E2E8F0] dark:border-[#262626] hover:border-slate-300 dark:hover:border-zinc-700 bg-white dark:bg-[#18181B]'
               }`}
             >
               <div className="flex items-center justify-between">
@@ -446,13 +446,13 @@ export function ProfileView() {
               </div>
               <div>
                 <h4 className="text-sm font-bold text-[#0F172A] dark:text-white">Dark Theme</h4>
-                <p className="text-xs text-[#64748B] dark:text-slate-400 mt-0.5">
-                  Sleek FinTech deep navy tone easy on the eyes.
+                <p className="text-xs text-[#64748B] dark:text-zinc-400 mt-0.5">
+                  Sleek deep black tone easy on the eyes and energy efficient.
                 </p>
               </div>
-              <div className="h-10 rounded-xl bg-[#0F172A] border border-slate-700 p-2 flex items-center gap-1.5 shadow-xs">
+              <div className="h-10 rounded-xl bg-[#000000] border border-[#262626] p-2 flex items-center gap-1.5 shadow-xs">
                 <div className="w-4 h-4 rounded-md bg-[#2563EB]" />
-                <div className="w-12 h-2 rounded bg-slate-600" />
+                <div className="w-12 h-2 rounded bg-zinc-700" />
               </div>
             </div>
 
@@ -462,7 +462,7 @@ export function ProfileView() {
               className={`cursor-pointer p-5 rounded-2xl border-2 transition-all space-y-3 ${
                 theme === 'system'
                   ? 'border-[#2563EB] bg-blue-50/50 dark:bg-blue-950/40 shadow-sm'
-                  : 'border-[#E2E8F0] dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900'
+                  : 'border-[#E2E8F0] dark:border-[#262626] hover:border-slate-300 dark:hover:border-zinc-700 bg-white dark:bg-[#18181B]'
               }`}
             >
               <div className="flex items-center justify-between">
@@ -475,7 +475,7 @@ export function ProfileView() {
               </div>
               <div>
                 <h4 className="text-sm font-bold text-[#0F172A] dark:text-white">System Auto</h4>
-                <p className="text-xs text-[#64748B] dark:text-slate-400 mt-0.5">
+                <p className="text-xs text-[#64748B] dark:text-zinc-400 mt-0.5">
                   Syncs with your device day & night mode settings.
                 </p>
               </div>

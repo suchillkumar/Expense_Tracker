@@ -174,8 +174,8 @@ export function AnalyticsView() {
               onClick={() => setTimeFilter(f.key as TimeFilter)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 timeFilter === f.key
-                  ? 'bg-white dark:bg-[#0F172A] text-[#2563EB] dark:text-blue-400 shadow-xs'
-                  : 'text-[#64748B] hover:text-[#0F172A] dark:text-slate-400'
+                  ? 'bg-white dark:bg-[#000000] text-[#2563EB] dark:text-blue-400 shadow-xs border border-transparent dark:border-[#262626]'
+                  : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
               }`}
             >
               {f.label}

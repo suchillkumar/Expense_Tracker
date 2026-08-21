@@ -212,13 +212,13 @@ export function ReportsView() {
 
         <div className="flex items-center gap-2.5 flex-wrap">
           {/* Report Type Switcher */}
-          <div className="flex items-center bg-[#F8FAFC] dark:bg-slate-800 p-1 rounded-xl gap-1 text-xs font-bold border border-[#E2E8F0] dark:border-slate-700">
+          <div className="flex items-center bg-slate-100 dark:bg-[#18181B] p-1 rounded-xl gap-1 text-xs font-bold border border-[#E2E8F0] dark:border-[#262626]">
             <button
               onClick={() => setReportType('monthly')}
               className={`px-3 py-1.5 rounded-lg transition-all ${
                 reportType === 'monthly'
-                  ? 'bg-white dark:bg-[#0F172A] text-[#2563EB] dark:text-blue-400 shadow-xs'
-                  : 'text-[#64748B] hover:text-[#0F172A] dark:text-slate-400'
+                  ? 'bg-white dark:bg-[#000000] text-[#2563EB] dark:text-blue-400 shadow-xs border border-transparent dark:border-[#262626]'
+                  : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
               }`}
             >
               Monthly
@@ -227,8 +227,8 @@ export function ReportsView() {
               onClick={() => setReportType('yearly')}
               className={`px-3 py-1.5 rounded-lg transition-all ${
                 reportType === 'yearly'
-                  ? 'bg-white dark:bg-[#0F172A] text-[#2563EB] dark:text-blue-400 shadow-xs'
-                  : 'text-[#64748B] hover:text-[#0F172A] dark:text-slate-400'
+                  ? 'bg-white dark:bg-[#000000] text-[#2563EB] dark:text-blue-400 shadow-xs border border-transparent dark:border-[#262626]'
+                  : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
               }`}
             >
               Yearly
