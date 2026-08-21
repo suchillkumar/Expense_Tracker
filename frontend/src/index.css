@@ -5,20 +5,35 @@
 @layer base {
   :root {
     --primary-blue: #2563EB;
-    --deep-navy: #0F172A;
-    --light-bg: #FFFFFF;
-    --card-white: #FFFFFF;
-    --income-green: #10B981;
-    --expense-red: #EF4444;
-    --warning-amber: #F59E0B;
-    --ai-purple: #7C3AED;
+    --hover-blue: #1D4ED8;
+    --main-bg: #F8FAFC;
+    --card-bg: #FFFFFF;
+    --main-text: #1E293B;
     --secondary-text: #64748B;
     --border-color: #E2E8F0;
+    --income-green: #16A34A;
+    --expense-red: #DC2626;
+    --warning-amber: #D97706;
+    --ai-purple: #7C3AED;
+  }
+
+  .dark {
+    --primary-blue: #3B82F6;
+    --hover-blue: #60A5FA;
+    --main-bg: #0F172A;
+    --card-bg: #1E293B;
+    --main-text: #F8FAFC;
+    --secondary-text: #94A3B8;
+    --border-color: #334155;
+    --income-green: #22C55E;
+    --expense-red: #F87171;
+    --warning-amber: #FBBF24;
+    --ai-purple: #A78BFA;
   }
 
   body {
-    background-color: #FFFFFF;
-    color: #0F172A;
+    background-color: #F8FAFC;
+    color: #1E293B;
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -26,25 +41,25 @@
   }
 
   .dark body {
-    background-color: #000000;
-    color: #FFFFFF;
+    background-color: #0F172A;
+    color: #F8FAFC;
   }
 }
 
-/* Custom Micro-Interactions & Pure White / Pure Black Aesthetics */
+/* Custom Micro-Interactions & Clean Fintech Aesthetics */
 @layer utilities {
   .fintech-card {
     background-color: #FFFFFF;
     border: 1px solid #E2E8F0;
     border-radius: 1.25rem;
-    box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.02);
+    box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.03), 0 1px 2px -1px rgba(15, 23, 42, 0.02);
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .dark .fintech-card {
-    background-color: #121212;
-    border: 1px solid #262626;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.6);
+    background-color: #1E293B;
+    border: 1px solid #334155;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.25);
   }
 
   .fintech-card-hover:hover {
@@ -53,7 +68,7 @@
   }
 
   .dark .fintech-card-hover:hover {
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.8), 0 0 15px -3px rgba(37, 99, 235, 0.15);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45);
   }
 
   .no-scrollbar::-webkit-scrollbar {

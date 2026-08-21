@@ -223,13 +223,13 @@ export function BudgetsView() {
       </div>
 
       {/* 2. Top Tabs: Monthly Tracker vs AI 50/30/20 vs Yearly Planner */}
-      <div className="flex items-center bg-slate-100 dark:bg-[#18181B] p-1.5 rounded-xl gap-1 max-w-md border border-[#E2E8F0] dark:border-[#262626]">
+      <div className="flex items-center bg-slate-100 dark:bg-[#243244] p-1.5 rounded-xl gap-1 max-w-md border border-[#E2E8F0] dark:border-[#334155]">
         <button
           onClick={() => setActiveTab('monthly')}
           className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
             activeTab === 'monthly'
-              ? 'bg-white dark:bg-[#000000] text-[#2563EB] dark:text-blue-400 shadow-xs border border-transparent dark:border-[#262626]'
-              : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
+              ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+              : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
           }`}
         >
           Monthly Tracker
@@ -241,8 +241,8 @@ export function BudgetsView() {
           }}
           className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 ${
             activeTab === 'ai_recommendation'
-              ? 'bg-white dark:bg-[#000000] text-[#7C3AED] dark:text-purple-400 shadow-xs border border-transparent dark:border-[#262626]'
-              : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
+              ? 'bg-white dark:bg-[#1E293B] text-[#7C3AED] dark:text-[#A78BFA] shadow-xs'
+              : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
           }`}
         >
           <span>✨</span> AI 50/30/20
@@ -251,8 +251,8 @@ export function BudgetsView() {
           onClick={() => setActiveTab('yearly')}
           className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
             activeTab === 'yearly'
-              ? 'bg-white dark:bg-[#000000] text-[#2563EB] dark:text-blue-400 shadow-xs border border-transparent dark:border-[#262626]'
-              : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
+              ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+              : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
           }`}
         >
           Yearly Planner
@@ -542,18 +542,18 @@ export function BudgetsView() {
 
       {/* ── CREATE / EDIT BUDGET MODAL ── */}
       {modalOpen && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white dark:bg-[#121212] rounded-3xl p-6 max-w-md w-full border border-[#E2E8F0] dark:border-[#262626] shadow-2xl space-y-4 animate-fade-in-up">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0] dark:border-[#262626]">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white dark:bg-[#1E293B] rounded-3xl p-6 max-w-md w-full border border-[#E2E8F0] dark:border-[#334155] shadow-2xl space-y-4 animate-fade-in-up">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0] dark:border-[#334155]">
               <div className="flex items-center gap-2">
                 <span className="text-xl">🎯</span>
-                <h3 className="text-base font-bold text-[#0F172A] dark:text-white">
+                <h3 className="text-base font-bold text-[#1E293B] dark:text-[#F8FAFC]">
                   {editingBudget ? 'Edit Category Budget' : 'Create New Category Budget'}
                 </h3>
               </div>
               <button
                 onClick={() => setModalOpen(false)}
-                className="text-xs font-bold text-[#64748B] hover:text-[#0F172A] dark:hover:text-white p-1"
+                className="text-xs font-bold text-[#64748B] hover:text-[#1E293B] dark:hover:text-white p-1"
               >
                 ✕
               </button>
@@ -561,11 +561,11 @@ export function BudgetsView() {
 
             <form onSubmit={handleSave} className="space-y-4 text-xs">
               <div>
-                <label className="block font-bold text-[#0F172A] dark:text-white mb-1.5">Category *</label>
+                <label className="block font-bold text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">Category *</label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#262626] bg-white dark:bg-[#18181B] text-xs font-medium text-[#0F172A] dark:text-white focus:ring-2 focus:ring-blue-500/20 outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#243244] text-xs font-medium text-[#1E293B] dark:text-[#F8FAFC] focus:ring-2 focus:ring-blue-500/20 outline-none"
                 >
                   {EXPENSE_CATEGORIES.map((c) => (
                     <option key={c} value={c}>
@@ -576,7 +576,7 @@ export function BudgetsView() {
               </div>
 
               <div>
-                <label className="block font-bold text-[#0F172A] dark:text-white mb-1.5">Monthly Limit Amount ({currency}) *</label>
+                <label className="block font-bold text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">Monthly Limit Amount ({currency}) *</label>
                 <input
                   type="number"
                   step="0.01"
@@ -584,32 +584,32 @@ export function BudgetsView() {
                   value={limitAmount}
                   onChange={(e) => setLimitAmount(e.target.value)}
                   placeholder="e.g. 8000"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#262626] bg-white dark:bg-[#18181B] text-xs font-medium text-[#0F172A] dark:text-white focus:ring-2 focus:ring-blue-500/20 outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#243244] text-xs font-medium text-[#1E293B] dark:text-[#F8FAFC] focus:ring-2 focus:ring-blue-500/20 outline-none"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-[#0F172A] dark:text-white mb-1.5">Month</label>
+                <label className="block font-bold text-[#1E293B] dark:text-[#F8FAFC] mb-1.5">Month</label>
                 <input
                   type="month"
                   value={activeMonth}
                   onChange={(e) => setActiveMonth(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#262626] bg-white dark:bg-[#18181B] text-xs font-medium text-[#0F172A] dark:text-white focus:ring-2 focus:ring-blue-500/20 outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#243244] text-xs font-medium text-[#1E293B] dark:text-[#F8FAFC] focus:ring-2 focus:ring-blue-500/20 outline-none"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E2E8F0] dark:border-[#262626]">
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E2E8F0] dark:border-[#334155]">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#262626] text-xs font-bold text-[#64748B] dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-[#18181B]"
+                  className="px-4 py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] text-xs font-bold text-[#64748B] dark:text-[#94A3B8] hover:bg-slate-100 dark:hover:bg-[#243244]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-500/20 transition-all disabled:opacity-50"
+                  className="px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#60A5FA] text-white text-xs font-bold shadow-md shadow-blue-500/20 transition-all disabled:opacity-50"
                 >
                   {saving ? 'Saving...' : editingBudget ? 'Update Budget' : 'Save Budget'}
                 </button>
@@ -621,25 +621,25 @@ export function BudgetsView() {
 
       {/* ── DELETE CONFIRMATION MODAL ── */}
       {deletingId && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white dark:bg-[#121212] rounded-3xl p-6 max-w-sm w-full border border-[#E2E8F0] dark:border-[#262626] shadow-2xl space-y-3 animate-fade-in-up">
-            <div className="w-12 h-12 rounded-2xl bg-red-50 dark:bg-red-950/50 text-[#EF4444] flex items-center justify-center text-xl">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white dark:bg-[#1E293B] rounded-3xl p-6 max-w-sm w-full border border-[#E2E8F0] dark:border-[#334155] shadow-2xl space-y-3 animate-fade-in-up">
+            <div className="w-12 h-12 rounded-2xl bg-red-50 dark:bg-red-950/50 text-[#DC2626] dark:text-[#F87171] flex items-center justify-center text-xl">
               🗑️
             </div>
-            <h3 className="text-base font-bold text-[#0F172A] dark:text-white">Delete Category Budget?</h3>
-            <p className="text-xs text-[#64748B] dark:text-zinc-400 leading-relaxed">
+            <h3 className="text-base font-bold text-[#1E293B] dark:text-[#F8FAFC]">Delete Category Budget?</h3>
+            <p className="text-xs text-[#64748B] dark:text-[#94A3B8] leading-relaxed">
               This will remove the spending cap limit for this category. Existing transactions will remain untouched.
             </p>
             <div className="grid grid-cols-2 gap-2.5 pt-3">
               <button
                 onClick={() => setDeletingId(null)}
-                className="py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#262626] text-xs font-bold text-[#64748B] dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-[#18181B]"
+                className="py-2.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] text-xs font-bold text-[#64748B] dark:text-[#94A3B8] hover:bg-slate-100 dark:hover:bg-[#243244]"
               >
                 Cancel
               </button>
               <button
                 onClick={() => handleDelete(deletingId)}
-                className="py-2.5 rounded-xl bg-[#EF4444] hover:bg-red-600 text-white text-xs font-bold shadow-md shadow-red-500/20 transition-all"
+                className="py-2.5 rounded-xl bg-[#DC2626] hover:bg-red-700 text-white text-xs font-bold shadow-md shadow-red-500/20 transition-all"
               >
                 Delete
               </button>

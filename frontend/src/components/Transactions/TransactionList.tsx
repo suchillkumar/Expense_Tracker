@@ -205,14 +205,14 @@ export function TransactionList({ limit }: TransactionListProps) {
       {/* 2. Tabs + Filter Toolbar */}
       <div className="fintech-card p-5 space-y-4">
         {/* Type Tabs */}
-        <div className="flex items-center justify-between flex-wrap gap-3 border-b border-[#E2E8F0] dark:border-[#262626] pb-4">
-          <div className="flex items-center bg-slate-100 dark:bg-[#18181B] p-1 rounded-xl gap-1 border border-[#E2E8F0] dark:border-[#262626]">
+        <div className="flex items-center justify-between flex-wrap gap-3 border-b border-[#E2E8F0] dark:border-[#334155] pb-4">
+          <div className="flex items-center bg-slate-100 dark:bg-[#243244] p-1 rounded-xl gap-1 border border-[#E2E8F0] dark:border-[#334155]">
             <button
               onClick={() => { setTab('all'); setPage(1) }}
               className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 tab === 'all'
-                  ? 'bg-white dark:bg-[#000000] text-[#2563EB] dark:text-blue-400 shadow-xs border border-transparent dark:border-[#262626]'
-                  : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
+                  ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+                  : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
               }`}
             >
               All Transactions ({transactions.length})
@@ -221,8 +221,8 @@ export function TransactionList({ limit }: TransactionListProps) {
               onClick={() => { setTab('income'); setPage(1) }}
               className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 tab === 'income'
-                  ? 'bg-white dark:bg-[#000000] text-[#10B981] dark:text-emerald-400 shadow-xs border border-transparent dark:border-[#262626]'
-                  : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
+                  ? 'bg-white dark:bg-[#1E293B] text-[#16A34A] dark:text-[#22C55E] shadow-xs'
+                  : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
               }`}
             >
               Income ({transactions.filter((t) => t.type === 'income').length})
@@ -231,8 +231,8 @@ export function TransactionList({ limit }: TransactionListProps) {
               onClick={() => { setTab('expense'); setPage(1) }}
               className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 tab === 'expense'
-                  ? 'bg-white dark:bg-[#000000] text-[#EF4444] dark:text-red-400 shadow-xs border border-transparent dark:border-[#262626]'
-                  : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
+                  ? 'bg-white dark:bg-[#1E293B] text-[#DC2626] dark:text-[#F87171] shadow-xs'
+                  : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
               }`}
             >
               Expenses ({transactions.filter((t) => t.type === 'expense').length})
@@ -241,13 +241,13 @@ export function TransactionList({ limit }: TransactionListProps) {
 
           {/* Active Filter Count / Reset */}
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-[#64748B] dark:text-slate-400">
+            <span className="text-xs font-bold text-[#64748B] dark:text-[#94A3B8]">
               Showing {filtered.length} of {transactions.length}
             </span>
             {(search || selectedCategory !== 'all' || selectedPaymentMethod !== 'all' || dateRange !== 'all' || minAmount || maxAmount || tab !== 'all') && (
               <button
                 onClick={resetFilters}
-                className="text-xs font-bold text-[#2563EB] dark:text-blue-400 hover:underline px-2.5 py-1 bg-blue-50 dark:bg-blue-950/40 rounded-lg"
+                className="text-xs font-bold text-[#2563EB] dark:text-[#60A5FA] hover:underline px-2.5 py-1 bg-blue-50 dark:bg-blue-950/40 rounded-lg"
               >
                 Clear Filters ✕
               </button>
@@ -557,63 +557,63 @@ export function TransactionList({ limit }: TransactionListProps) {
 
       {/* Detail Modal */}
       {viewDetailsTx && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white dark:bg-[#121212] rounded-3xl p-6 max-w-md w-full border border-[#E2E8F0] dark:border-[#262626] shadow-2xl space-y-4 animate-fade-in-up">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0] dark:border-[#262626]">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white dark:bg-[#1E293B] rounded-3xl p-6 max-w-md w-full border border-[#E2E8F0] dark:border-[#334155] shadow-2xl space-y-4 animate-fade-in-up">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0] dark:border-[#334155]">
               <div className="flex items-center gap-2.5">
                 <span className="text-xl">{CATEGORY_ICONS[viewDetailsTx.category] || '📦'}</span>
-                <h3 className="text-base font-bold text-[#0F172A] dark:text-white">Transaction Details</h3>
+                <h3 className="text-base font-bold text-[#1E293B] dark:text-[#F8FAFC]">Transaction Details</h3>
               </div>
               <button
                 onClick={() => setViewDetailsTx(null)}
-                className="text-sm font-bold text-[#64748B] hover:text-[#0F172A] dark:hover:text-white p-1"
+                className="text-sm font-bold text-[#64748B] hover:text-[#1E293B] dark:hover:text-white p-1"
               >
                 ✕
               </button>
             </div>
 
             <div className="space-y-3 text-xs">
-              <div className="flex justify-between py-1 border-b border-gray-50 dark:border-slate-800/60">
-                <span className="text-[#64748B]">Description</span>
-                <span className="font-bold text-[#0F172A] dark:text-white">{viewDetailsTx.description}</span>
+              <div className="flex justify-between py-1 border-b border-gray-100 dark:border-[#334155]">
+                <span className="text-[#64748B] dark:text-[#94A3B8]">Description</span>
+                <span className="font-bold text-[#1E293B] dark:text-[#F8FAFC]">{viewDetailsTx.description}</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-gray-50 dark:border-slate-800/60">
-                <span className="text-[#64748B]">Amount</span>
+              <div className="flex justify-between py-1 border-b border-gray-100 dark:border-[#334155]">
+                <span className="text-[#64748B] dark:text-[#94A3B8]">Amount</span>
                 <span
                   className={`font-black tabular-numbers text-sm ${
-                    viewDetailsTx.type === 'income' ? 'text-[#10B981]' : 'text-[#EF4444]'
+                    viewDetailsTx.type === 'income' ? 'text-[#16A34A] dark:text-[#22C55E]' : 'text-[#DC2626] dark:text-[#F87171]'
                   }`}
                 >
                   {viewDetailsTx.type === 'income' ? '+' : '−'} {formatMoney(viewDetailsTx.amount, currency)}
                 </span>
               </div>
-              <div className="flex justify-between py-1 border-b border-gray-50 dark:border-slate-800/60">
-                <span className="text-[#64748B]">Type</span>
-                <span className="capitalize font-bold text-[#0F172A] dark:text-white">{viewDetailsTx.type}</span>
+              <div className="flex justify-between py-1 border-b border-gray-100 dark:border-[#334155]">
+                <span className="text-[#64748B] dark:text-[#94A3B8]">Type</span>
+                <span className="capitalize font-bold text-[#1E293B] dark:text-[#F8FAFC]">{viewDetailsTx.type}</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-gray-50 dark:border-slate-800/60">
-                <span className="text-[#64748B]">Category</span>
-                <span className="font-bold text-[#0F172A] dark:text-white">{viewDetailsTx.category}</span>
+              <div className="flex justify-between py-1 border-b border-gray-100 dark:border-[#334155]">
+                <span className="text-[#64748B] dark:text-[#94A3B8]">Category</span>
+                <span className="font-bold text-[#1E293B] dark:text-[#F8FAFC]">{viewDetailsTx.category}</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-gray-50 dark:border-slate-800/60">
-                <span className="text-[#64748B]">Date</span>
-                <span className="font-semibold text-[#0F172A] dark:text-white">{formatDate(viewDetailsTx.date)}</span>
+              <div className="flex justify-between py-1 border-b border-gray-100 dark:border-[#334155]">
+                <span className="text-[#64748B] dark:text-[#94A3B8]">Date</span>
+                <span className="font-semibold text-[#1E293B] dark:text-[#F8FAFC]">{formatDate(viewDetailsTx.date)}</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-gray-50 dark:border-slate-800/60">
-                <span className="text-[#64748B]">Payment Method</span>
-                <span className="font-semibold text-[#0F172A] dark:text-white">{viewDetailsTx.paymentMethod || 'Cash'}</span>
+              <div className="flex justify-between py-1 border-b border-gray-100 dark:border-[#334155]">
+                <span className="text-[#64748B] dark:text-[#94A3B8]">Payment Method</span>
+                <span className="font-semibold text-[#1E293B] dark:text-[#F8FAFC]">{viewDetailsTx.paymentMethod || 'Cash'}</span>
               </div>
               {viewDetailsTx.notes && (
                 <div className="py-1">
-                  <span className="text-[#64748B] block mb-1">Notes</span>
-                  <p className="p-3 bg-[#F8FAFC] dark:bg-slate-800 rounded-xl text-[#0F172A] dark:text-slate-200">
+                  <span className="text-[#64748B] dark:text-[#94A3B8] block mb-1">Notes</span>
+                  <p className="p-3 bg-slate-100 dark:bg-[#243244] rounded-xl text-[#1E293B] dark:text-[#F8FAFC]">
                     {viewDetailsTx.notes}
                   </p>
                 </div>
               )}
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#E2E8F0] dark:border-slate-800">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#E2E8F0] dark:border-[#334155]">
               <button
                 onClick={() => {
                   const tx = viewDetailsTx
@@ -622,7 +622,7 @@ export function TransactionList({ limit }: TransactionListProps) {
                   setEditingTx(tx)
                   setFormOpen(true)
                 }}
-                className="px-4 py-2 rounded-xl bg-[#2563EB] text-white text-xs font-bold hover:bg-blue-700 transition-all"
+                className="px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#60A5FA] text-white text-xs font-bold transition-all"
               >
                 Edit Record
               </button>

@@ -167,13 +167,13 @@ export function AIAssistantView() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex items-center bg-slate-100 dark:bg-[#18181B] p-1.5 rounded-xl gap-1 border border-[#E2E8F0] dark:border-[#262626]">
+        <div className="flex items-center bg-slate-100 dark:bg-[#243244] p-1.5 rounded-xl gap-1 border border-[#E2E8F0] dark:border-[#334155]">
           <button
             onClick={() => setActiveTab('chat')}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
               activeTab === 'chat'
-                ? 'bg-white dark:bg-[#000000] text-[#2563EB] dark:text-blue-400 shadow-xs border border-transparent dark:border-[#262626]'
-                : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
+                ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+                : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
             }`}
           >
             💬 Chat Assistant
@@ -182,8 +182,8 @@ export function AIAssistantView() {
             onClick={() => setActiveTab('analysis')}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
               activeTab === 'analysis'
-                ? 'bg-white dark:bg-[#000000] text-[#2563EB] dark:text-blue-400 shadow-xs border border-transparent dark:border-[#262626]'
-                : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
+                ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+                : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
             }`}
           >
             🔍 Spending Patterns
@@ -192,8 +192,8 @@ export function AIAssistantView() {
             onClick={() => setActiveTab('predictions')}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
               activeTab === 'predictions'
-                ? 'bg-white dark:bg-[#000000] text-[#2563EB] dark:text-blue-400 shadow-xs border border-transparent dark:border-[#262626]'
-                : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
+                ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+                : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
             }`}
           >
             🔮 Predictions
@@ -202,8 +202,8 @@ export function AIAssistantView() {
             onClick={() => setActiveTab('savings')}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
               activeTab === 'savings'
-                ? 'bg-white dark:bg-[#000000] text-[#2563EB] dark:text-blue-400 shadow-xs border border-transparent dark:border-[#262626]'
-                : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
+                ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+                : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
             }`}
           >
             💡 Savings Tips
@@ -294,7 +294,7 @@ export function AIAssistantView() {
               e.preventDefault()
               handleSendMessage()
             }}
-            className="p-3.5 bg-white dark:bg-[#121212] border-t border-[#E2E8F0] dark:border-[#262626] flex items-center gap-2"
+            className="p-3.5 bg-white dark:bg-[#1E293B] border-t border-[#E2E8F0] dark:border-[#334155] flex items-center gap-2"
           >
             <input
               type="text"
@@ -302,7 +302,7 @@ export function AIAssistantView() {
               onChange={(e) => setInputMessage(e.target.value)}
               placeholder="Ask anything about your expenses, savings, or budgets..."
               disabled={sending}
-              className="flex-1 px-4 py-3 rounded-xl border border-[#E2E8F0] dark:border-[#262626] bg-white dark:bg-[#18181B] text-xs text-[#0F172A] dark:text-white placeholder-[#64748B] focus:ring-2 focus:ring-blue-500/20 focus:border-[#2563EB] outline-none transition-all"
+              className="flex-1 px-4 py-3 rounded-xl border border-[#E2E8F0] dark:border-[#334155] bg-slate-50 dark:bg-[#243244] text-xs text-[#1E293B] dark:text-[#F8FAFC] placeholder-[#64748B] focus:ring-2 focus:ring-blue-500/20 focus:border-[#2563EB] outline-none transition-all"
             />
             <button
               type="submit"

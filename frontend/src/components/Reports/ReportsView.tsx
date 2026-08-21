@@ -212,13 +212,13 @@ export function ReportsView() {
 
         <div className="flex items-center gap-2.5 flex-wrap">
           {/* Report Type Switcher */}
-          <div className="flex items-center bg-slate-100 dark:bg-[#18181B] p-1 rounded-xl gap-1 text-xs font-bold border border-[#E2E8F0] dark:border-[#262626]">
+          <div className="flex items-center bg-slate-100 dark:bg-[#243244] p-1 rounded-xl gap-1 text-xs font-bold border border-[#E2E8F0] dark:border-[#334155]">
             <button
               onClick={() => setReportType('monthly')}
               className={`px-3 py-1.5 rounded-lg transition-all ${
                 reportType === 'monthly'
-                  ? 'bg-white dark:bg-[#000000] text-[#2563EB] dark:text-blue-400 shadow-xs border border-transparent dark:border-[#262626]'
-                  : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
+                  ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+                  : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
               }`}
             >
               Monthly
@@ -227,8 +227,8 @@ export function ReportsView() {
               onClick={() => setReportType('yearly')}
               className={`px-3 py-1.5 rounded-lg transition-all ${
                 reportType === 'yearly'
-                  ? 'bg-white dark:bg-[#000000] text-[#2563EB] dark:text-blue-400 shadow-xs border border-transparent dark:border-[#262626]'
-                  : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
+                  ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+                  : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
               }`}
             >
               Yearly
@@ -240,7 +240,7 @@ export function ReportsView() {
             <select
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="border border-[#E2E8F0] dark:border-slate-700 bg-white dark:bg-slate-800 text-[#0F172A] dark:text-white rounded-xl px-3.5 py-2 text-xs font-bold focus:outline-none"
+              className="border border-[#E2E8F0] dark:border-[#334155] bg-white dark:bg-[#243244] text-[#1E293B] dark:text-[#F8FAFC] rounded-xl px-3.5 py-2 text-xs font-bold focus:outline-none"
             >
               {availableMonths.map((m) => (
                 <option key={m} value={m}>

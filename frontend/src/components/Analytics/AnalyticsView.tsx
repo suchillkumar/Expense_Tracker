@@ -159,7 +159,7 @@ export function AnalyticsView() {
           </p>
         </div>
 
-        {/* Time Filter Pills */}
+        {/* Filters */}
         <div className="flex items-center flex-wrap bg-[#F8FAFC] dark:bg-slate-800 p-1.5 rounded-xl gap-1 border border-[#E2E8F0] dark:border-slate-700">
           {[
             { key: 'this_month', label: 'This Month' },
@@ -174,8 +174,8 @@ export function AnalyticsView() {
               onClick={() => setTimeFilter(f.key as TimeFilter)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 timeFilter === f.key
-                  ? 'bg-white dark:bg-[#000000] text-[#2563EB] dark:text-blue-400 shadow-xs border border-transparent dark:border-[#262626]'
-                  : 'text-[#64748B] hover:text-[#0F172A] dark:text-zinc-400 dark:hover:text-white'
+                  ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
+                  : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC]'
               }`}
             >
               {f.label}
@@ -187,22 +187,22 @@ export function AnalyticsView() {
       {/* Custom Date Pickers */}
       {timeFilter === 'custom' && (
         <div className="fintech-card p-4 flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#64748B]">
+          <div className="flex items-center gap-2 text-xs font-bold text-[#64748B] dark:text-[#94A3B8]">
             <span>From:</span>
             <input
               type="date"
               value={customFrom}
               onChange={(e) => setCustomFrom(e.target.value)}
-              className="px-3 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-slate-700 text-xs dark:bg-slate-800 text-[#0F172A] dark:text-white"
+              className="px-3 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] text-xs bg-white dark:bg-[#243244] text-[#1E293B] dark:text-[#F8FAFC]"
             />
           </div>
-          <div className="flex items-center gap-2 text-xs font-bold text-[#64748B]">
+          <div className="flex items-center gap-2 text-xs font-bold text-[#64748B] dark:text-[#94A3B8]">
             <span>To:</span>
             <input
               type="date"
               value={customTo}
               onChange={(e) => setCustomTo(e.target.value)}
-              className="px-3 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-slate-700 text-xs dark:bg-slate-800 text-[#0F172A] dark:text-white"
+              className="px-3 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-[#334155] text-xs bg-white dark:bg-[#243244] text-[#1E293B] dark:text-[#F8FAFC]"
             />
           </div>
         </div>
