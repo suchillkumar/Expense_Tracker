@@ -501,13 +501,13 @@ async function callGeminiAPI(systemPrompt, userMessage, conversationHistory = []
   const apiKey = process.env.GEMINI_API_KEY || process.env.AI_API_KEY
   if (!apiKey) return null
 
-  const models = ['gemini-3.6-flash', 'gemini-flash-latest', 'gemini-3.7-flash']
+  const models = ['gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-flash-latest', 'gemini-3.5-flash']
 
   try {
     const contents = []
 
     if (Array.isArray(conversationHistory)) {
-      conversationHistory.slice(-6).forEach((msg) => {
+      conversationHistory.slice(-4).forEach((msg) => {
         contents.push({
           role: msg.role === 'assistant' ? 'model' : 'user',
           parts: [{ text: msg.content }],
@@ -526,8 +526,9 @@ async function callGeminiAPI(systemPrompt, userMessage, conversationHistory = []
       },
       contents,
       generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 1024,
+        temperature: 0.3,
+        maxOutputTokens: 600,
+        thinkingConfig: { thinkingBudget: 0 },
       },
     }
 
@@ -537,12 +538,14 @@ async function callGeminiAPI(systemPrompt, userMessage, conversationHistory = []
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
+          signal: AbortSignal.timeout(3500),
         })
 
         if (res.ok) {
           const data = await res.json()
-          const text = data?.candidates?.[0]?.content?.parts?.[0]?.text
-          if (text) return text.trim()
+          const parts = data?.candidates?.[0]?.content?.parts || []
+          const text = parts.map((p) => p.text || '').join('').trim()
+          if (text) return text
         }
       } catch (e) {
         console.warn(`[Gemini API] Error trying model ${model}:`, e.message)

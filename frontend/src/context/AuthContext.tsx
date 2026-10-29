@@ -23,6 +23,7 @@ interface AuthContextValue {
   loading: boolean
   restoring: boolean
   login: (email: string, password: string) => Promise<void>
+  loginDemo: () => Promise<void>
   register: (name: string, email: string, password: string, phone?: string, confirmPassword?: string) => Promise<void>
   completeOnboarding: (data: OnboardingData) => Promise<void>
   logout: () => void
@@ -59,6 +60,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(true)
     try {
       const u = await api.login(email, password)
+      setUser(u)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const loginDemo = async () => {
+    setLoading(true)
+    try {
+      const u = await api.loginDemo()
       setUser(u)
     } finally {
       setLoading(false)
@@ -112,7 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const value = useMemo(
-    () => ({ user, loading, restoring, login, register, completeOnboarding, logout, updateProfile, changePassword }),
+    () => ({ user, loading, restoring, login, loginDemo, register, completeOnboarding, logout, updateProfile, changePassword }),
     [user, loading, restoring]
   )
 

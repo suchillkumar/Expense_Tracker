@@ -23,6 +23,7 @@ import {
 
 interface DashboardProps {
   onNavigate: (viewKey: string) => void
+  onOpenAdd?: (type?: TransactionType) => void
 }
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -37,6 +38,7 @@ const CATEGORY_ICONS: Record<string, string> = {
   Salary: '💼',
   Freelance: '💻',
   Investments: '📈',
+  Rent: '🏠',
   Other: '📦',
 }
 
@@ -47,14 +49,17 @@ const CATEGORY_COLORS: Record<string, string> = {
   Bills: '#EAB308',
   Entertainment: '#A855F7',
   Education: '#3B82F6',
-  Healthcare: '#16A34A',
+  Healthcare: '#10B981',
   Travel: '#06B6D4',
+  Salary: '#2563EB',
+  Freelance: '#0284C7',
+  Rent: '#6366F1',
   Other: '#64748B',
 }
 
 type TimeScale = 'weekly' | 'monthly' | 'yearly'
 
-export function Dashboard({ onNavigate }: DashboardProps) {
+export function Dashboard({ onNavigate, onOpenAdd }: DashboardProps) {
   const { user } = useAuth()
   const {
     transactions,
@@ -66,23 +71,20 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const toast = useToast()
   const { isDark } = useTheme()
 
-  const totalIncome = summary.income
-  const totalExpenses = summary.expenses
-  const balance = summary.balance
-  const savings = summary.savings
-  const savingsRate = summary.savingsRate
-  const [loadingDemo, setLoadingDemo] = useState(false)
-
+  const [showBalance, setShowBalance] = useState(true)
+  const [selectedMonth, setSelectedMonth] = useState(() => new Date().toISOString().slice(0, 7))
   const [timeScale, setTimeScale] = useState<TimeScale>('monthly')
+  const [loadingDemo, setLoadingDemo] = useState(false)
+  const [recentSearch, setRecentSearch] = useState('')
+  const [recentCatFilter, setRecentCatFilter] = useState('all')
 
-  // Transaction Modal State
+  // Modals state
   const [transactionModal, setTransactionModal] = useState<{
     open: boolean
     presetType: TransactionType
     editing: Transaction | null
   }>({ open: false, presetType: 'expense', editing: null })
 
-  // Delete Confirmation Modal State
   const [deleteModal, setDeleteModal] = useState<{
     open: boolean
     transaction: Transaction | null
@@ -91,16 +93,15 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   // Dynamic Greeting based on time of day
   const greeting = useMemo(() => {
     const hour = new Date().getHours()
-    if (hour < 12) return 'Good Morning 👋'
-    if (hour < 17) return 'Good Afternoon 👋'
-    return 'Good Evening 👋'
+    if (hour < 12) return 'Good Morning'
+    if (hour < 17) return 'Good Afternoon'
+    return 'Good Evening'
   }, [])
 
   // Month-over-Month calculations
   const momStats = useMemo(() => {
     const now = new Date()
     const thisMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
-
     const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
     const lastMonthStr = `${lastMonthDate.getFullYear()}-${String(lastMonthDate.getMonth() + 1).padStart(2, '0')}`
 
@@ -126,6 +127,22 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     return { incMoM, expMoM }
   }, [transactions])
 
+  // Total budget and spending for selected month
+  const monthlyBudgetStats = useMemo(() => {
+    const totalBudgetLimit = budgets
+      .filter((b) => !b.month || b.month === selectedMonth)
+      .reduce((sum, b) => sum + b.limitAmount, 0)
+
+    const totalMonthExpense = transactions
+      .filter((t) => t.type === 'expense' && t.date.startsWith(selectedMonth))
+      .reduce((sum, t) => sum + t.amount, 0)
+
+    const remainingBudget = Math.max(0, totalBudgetLimit - totalMonthExpense)
+    const pctSpent = totalBudgetLimit > 0 ? Math.min(100, Math.round((totalMonthExpense / totalBudgetLimit) * 100)) : 0
+
+    return { totalBudgetLimit, totalMonthExpense, remainingBudget, pctSpent }
+  }, [budgets, transactions, selectedMonth])
+
   // Chart Data: Weekly | Monthly | Yearly
   const mainChartData = useMemo(() => {
     const now = new Date()
@@ -136,7 +153,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         const d = new Date()
         d.setDate(now.getDate() - i)
         const dateStr = d.toISOString().split('T')[0]
-        const label = d.toLocaleDateString([], { weekday: 'short', month: 'numeric', day: 'numeric' })
+        const label = d.toLocaleDateString([], { weekday: 'short' })
 
         let inc = 0
         let exp = 0
@@ -172,7 +189,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     const months: { label: string; income: number; expense: number; savings: number }[] = []
     for (let i = 5; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
-      const label = d.toLocaleDateString([], { month: 'short', year: '2-digit' })
+      const label = d.toLocaleDateString([], { month: 'short' })
       const ym = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
 
       let inc = 0
@@ -190,14 +207,11 @@ export function Dashboard({ onNavigate }: DashboardProps) {
 
   // Category Breakdown for current month
   const categoryData = useMemo(() => {
-    const now = new Date()
-    const thisMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
-
     const catMap: Record<string, number> = {}
     let monthTotalExp = 0
 
     transactions.forEach((tx) => {
-      if (tx.type === 'expense' && tx.date.startsWith(thisMonthStr)) {
+      if (tx.type === 'expense' && tx.date.startsWith(selectedMonth)) {
         catMap[tx.category] = (catMap[tx.category] || 0) + tx.amount
         monthTotalExp += tx.amount
       }
@@ -219,322 +233,417 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         percent: monthTotalExp > 0 ? Math.round((value / monthTotalExp) * 100) : 0,
       }))
       .sort((a, b) => b.value - a.value)
-      .slice(0, 6)
-  }, [transactions])
+  }, [transactions, selectedMonth])
 
-  // Budget progress items for current month
-  const budgetProgress = useMemo(() => {
-    const now = new Date()
-    const thisMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
-
-    const spentMap: Record<string, number> = {}
-    transactions.forEach((tx) => {
-      if (tx.type === 'expense' && tx.date.startsWith(thisMonthStr)) {
-        spentMap[tx.category] = (spentMap[tx.category] || 0) + tx.amount
-      }
-    })
-
-    return budgets.map((b) => {
-      const spent = spentMap[b.category] || 0
-      const percent = b.limitAmount > 0 ? Math.min(100, Math.round((spent / b.limitAmount) * 100)) : 0
-      const remaining = Math.max(0, b.limitAmount - spent)
-      const isOver = spent > b.limitAmount
-      const isNear = percent >= 80
-
-      let status: 'normal' | 'warning' | 'danger' = 'normal'
-      let color = isDark ? '#22C55E' : '#16A34A'
-      if (isOver) {
-        status = 'danger'
-        color = isDark ? '#F87171' : '#DC2626'
-      } else if (isNear) {
-        status = 'warning'
-        color = isDark ? '#FBBF24' : '#D97706'
-      }
-
-      return {
-        ...b,
-        spent,
-        percent,
-        remaining,
-        isOver,
-        status,
-        color,
-      }
-    })
-  }, [budgets, transactions, isDark])
-
-  // Top recent transactions (5 items)
+  // Filtered recent transactions for mobile home feed
   const recentTransactions = useMemo(() => {
-    return [...transactions]
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, 5)
-  }, [transactions])
+    let list = [...transactions].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    if (recentSearch.trim()) {
+      const q = recentSearch.toLowerCase()
+      list = list.filter((t) => t.description.toLowerCase().includes(q) || t.category.toLowerCase().includes(q))
+    }
+    if (recentCatFilter !== 'all') {
+      list = list.filter((t) => t.category === recentCatFilter)
+    }
+    return list.slice(0, 6)
+  }, [transactions, recentSearch, recentCatFilter])
+
+  // Category budgets progress
+  const budgetProgress = useMemo(() => {
+    return budgets
+      .filter((b) => !b.month || b.month === selectedMonth)
+      .map((b) => {
+        const spent = transactions
+          .filter((t) => t.type === 'expense' && t.category === b.category && t.date.startsWith(selectedMonth))
+          .reduce((sum, t) => sum + t.amount, 0)
+
+        const limit = b.limitAmount || 1
+        const percent = Math.min(100, Math.round((spent / limit) * 100))
+        const remaining = Math.max(0, limit - spent)
+        const isOver = spent > limit
+
+        return {
+          ...b,
+          spent,
+          percent,
+          remaining,
+          isOver,
+        }
+      })
+  }, [budgets, transactions, selectedMonth])
 
   const handleLoadDemo = async () => {
     setLoadingDemo(true)
     try {
       await loadDemoData()
-      toast.success('Successfully loaded 12 months of demonstration financial records!')
+      toast.success('Successfully loaded 12 months of live demonstration financial records!')
     } catch {
-      toast.error('Failed to load sample dataset')
+      toast.error('Failed to populate demo dataset')
     } finally {
       setLoadingDemo(false)
     }
   }
 
+  const handleOpenAddForm = (t: TransactionType) => {
+    if (onOpenAdd) {
+      onOpenAdd(t)
+    } else {
+      setTransactionModal({ open: true, presetType: t, editing: null })
+    }
+  }
+
   return (
-    <div className="space-y-6 animate-fade-in pb-10">
-      {/* ── 1. Top Hero Section ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-[#1E293B] dark:text-[#F8FAFC]">
-            {greeting} {user?.name ? user.name.split(' ')[0] : ''}
-          </h1>
-          <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5 font-normal">
-            Your personal financial overview & insights
-          </p>
+    <div className="space-y-6 animate-fade-in pb-16">
+      {/* ── 1. Mobile-First Greeting & Month Selector Header ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center justify-between sm:justify-start gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center text-sm font-bold shadow-md shadow-blue-500/20 shrink-0">
+            {user?.name ? user.name[0].toUpperCase() : 'A'}
+          </div>
+          <div>
+            <h1 className="text-lg sm:text-2xl font-extrabold text-slate-900 dark:text-white leading-tight">
+              {greeting}, {user?.name ? user.name.split(' ')[0] : 'Friend'} 👋
+            </h1>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Personal Financial Overview & Insights
+            </p>
+          </div>
         </div>
 
-        {/* ── Quick Action Buttons ── */}
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Add Expense */}
-          <button
-            onClick={() => setTransactionModal({ open: true, presetType: 'expense', editing: null })}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#DC2626] hover:bg-[#B91C1C] dark:bg-[#DC2626] dark:hover:bg-[#EF4444] text-white text-sm font-medium shadow-xs transition-all"
-          >
-            <span>🔴</span> + Add Expense
-          </button>
+        {/* Month Selector & Quick Settings */}
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <div className="relative">
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+              className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-xs outline-none cursor-pointer"
+            >
+              <option value={new Date().toISOString().slice(0, 7)}>Current Month</option>
+              {[1, 2, 3, 4, 5].map((offset) => {
+                const d = new Date()
+                d.setMonth(d.getMonth() - offset)
+                const val = d.toISOString().slice(0, 7)
+                const label = d.toLocaleDateString([], { month: 'short', year: 'numeric' })
+                return (
+                  <option key={val} value={val}>
+                    {label}
+                  </option>
+                )
+              })}
+            </select>
+          </div>
 
-          {/* Add Income */}
           <button
-            onClick={() => setTransactionModal({ open: true, presetType: 'income', editing: null })}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#16A34A] hover:bg-[#15803D] dark:bg-[#16A34A] dark:hover:bg-[#22C55E] text-white text-sm font-medium shadow-xs transition-all"
+            onClick={() => onNavigate('profile')}
+            className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            title="Account Settings"
           >
-            <span>💰</span> + Add Income
-          </button>
-
-          {/* Create Budget */}
-          <button
-            onClick={() => onNavigate('budgets')}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white dark:bg-[#1E293B] border border-[#2563EB] dark:border-[#334155] text-[#2563EB] dark:text-[#F8FAFC] text-sm font-medium hover:bg-blue-50 dark:hover:bg-[#243244] transition-all"
-          >
-            <span>🎯</span> Create Budget
-          </button>
-
-          {/* AI Budget */}
-          <button
-            onClick={() => onNavigate('budgets')}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#7C3AED] hover:bg-purple-700 dark:bg-[#7C3AED] dark:hover:bg-purple-600 text-white text-sm font-medium shadow-xs transition-all"
-          >
-            <span>✨</span> AI Budget
+            ⚙️
           </button>
         </div>
       </div>
 
-      {/* ── Demo Data Banner for empty state ── */}
-      {transactions.length === 0 && (
-        <div className="fintech-card p-5 flex flex-wrap items-center justify-between gap-4 border-dashed border-2 border-[#E2E8F0] dark:border-[#334155]">
-          <div>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/60 text-[#2563EB] dark:text-[#60A5FA]">
-              Quick Start
+      {/* ── 2. Master Financial Overview Card (Fintech Midnight Gradient) ── */}
+      <div className="rounded-3xl p-6 sm:p-7 bg-gradient-to-br from-[#0B1528] via-[#0F1E38] to-[#1E293B] text-white shadow-xl shadow-slate-950/20 relative overflow-hidden">
+        {/* Subtle Ambient Glow */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
+
+        <div className="relative z-10 space-y-5">
+          {/* Top Label & Eye Toggle */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-300">Total Net Balance</span>
+              <button
+                type="button"
+                onClick={() => setShowBalance(!showBalance)}
+                className="text-slate-400 hover:text-white transition-colors text-xs"
+                title={showBalance ? 'Hide Balance' : 'Show Balance'}
+              >
+                {showBalance ? '👁️' : '🙈'}
+              </button>
+            </div>
+
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              {summary.balance >= 0 ? 'Surplus' : 'Deficit'}
             </span>
-            <h3 className="text-base font-semibold text-[#1E293B] dark:text-[#F8FAFC] mt-1.5">No transactions yet</h3>
-            <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5 font-normal">
-              Click below to load sample transactions, AI budget plans, and analytics charts.
+          </div>
+
+          {/* Main Balance Figure */}
+          <div>
+            <p className="text-3xl sm:text-4xl font-extrabold tracking-tight tabular-numbers">
+              {showBalance ? formatMoney(summary.balance, currency) : '••••••••'}
+            </p>
+            <p className="text-xs text-slate-400 mt-1">Available across all recorded accounts</p>
+          </div>
+
+          {/* Inflows & Outflows Breakdown Row */}
+          <div className="grid grid-cols-2 gap-3 pt-2 border-t border-white/10">
+            {/* Inflows */}
+            <div className="bg-white/5 rounded-2xl p-3 border border-white/5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-slate-400">Total Inflows</span>
+                <span className="text-emerald-400 text-xs">💰</span>
+              </div>
+              <p className="text-lg font-bold text-emerald-400 mt-1 tabular-numbers">
+                +{formatMoney(summary.income, currency)}
+              </p>
+              <p className="text-[10px] text-slate-400 mt-0.5">
+                {momStats.incMoM >= 0 ? `▲ +${momStats.incMoM}%` : `▼ ${momStats.incMoM}%`} vs last mo
+              </p>
+            </div>
+
+            {/* Outflows */}
+            <div className="bg-white/5 rounded-2xl p-3 border border-white/5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-slate-400">Total Expenses</span>
+                <span className="text-rose-400 text-xs">🔴</span>
+              </div>
+              <p className="text-lg font-bold text-rose-400 mt-1 tabular-numbers">
+                −{formatMoney(summary.expenses, currency)}
+              </p>
+              <p className="text-[10px] text-slate-400 mt-0.5">
+                {momStats.expMoM <= 0 ? `▼ -${Math.abs(momStats.expMoM)}%` : `▲ +${momStats.expMoM}%`} vs last mo
+              </p>
+            </div>
+          </div>
+
+          {/* Remaining Budget & Spending Progress */}
+          {monthlyBudgetStats.totalBudgetLimit > 0 && (
+            <div className="space-y-1.5 pt-1">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-slate-300">
+                  Monthly Budget: <span className="font-semibold text-white">{formatMoney(monthlyBudgetStats.remainingBudget, currency)} remaining</span>
+                </span>
+                <span className="font-bold text-slate-300">{monthlyBudgetStats.pctSpent}% spent</span>
+              </div>
+              <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-500 ${
+                    monthlyBudgetStats.pctSpent >= 90
+                      ? 'bg-rose-500'
+                      : monthlyBudgetStats.pctSpent >= 75
+                      ? 'bg-amber-400'
+                      : 'bg-emerald-400'
+                  }`}
+                  style={{ width: `${monthlyBudgetStats.pctSpent}%` }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Direct Mobile Quick Action Buttons on Card */}
+          <div className="flex items-center gap-3 pt-2">
+            <button
+              onClick={() => handleOpenAddForm('expense')}
+              className="flex-1 py-2.5 px-4 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold shadow-md shadow-rose-500/20 transition-all active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <span>🔴</span>
+              <span>+ Add Expense</span>
+            </button>
+
+            <button
+              onClick={() => handleOpenAddForm('income')}
+              className="flex-1 py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold shadow-md shadow-emerald-500/20 transition-all active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <span>💰</span>
+              <span>+ Add Income</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Empty State Demo Populator Banner ── */}
+      {transactions.length === 0 && (
+        <div className="fintech-card p-6 flex flex-wrap items-center justify-between gap-4 border-dashed border-2 border-blue-300 dark:border-blue-900/60 bg-blue-50/40 dark:bg-blue-950/20">
+          <div>
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300">
+              ⚡ Quick Start Demonstration
+            </span>
+            <h3 className="text-base font-bold text-slate-900 dark:text-white mt-1.5">No financial transactions recorded yet</h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+              Click below to immediately populate 12 months of realistic cashflows, category budgets, and AI insights.
             </p>
           </div>
           <button
             onClick={handleLoadDemo}
             disabled={loadingDemo}
-            className="px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] dark:bg-[#3B82F6] dark:hover:bg-[#60A5FA] text-white text-sm font-medium shadow-xs transition-all"
+            className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-md shadow-blue-500/20 transition-all active:scale-95 cursor-pointer"
           >
-            {loadingDemo ? 'Populating...' : 'Load 12-Month Demo Data'}
+            {loadingDemo ? 'Populating Records...' : 'Load 12-Month Demo Dataset →'}
           </button>
         </div>
       )}
 
-      {/* ── 2. Four KPI Summary Cards ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Card 1: Total Income */}
-        <div className="fintech-card fintech-card-hover p-5 relative overflow-hidden border-t-3 border-t-[#16A34A] dark:border-t-[#22C55E]">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Total Income</span>
-            <div className="w-8 h-8 rounded-xl bg-green-50 dark:bg-green-950/50 text-[#16A34A] dark:text-[#22C55E] flex items-center justify-center text-sm font-semibold">
-              💰
-            </div>
-          </div>
-          <p className="text-2xl font-semibold text-[#1E293B] dark:text-[#F8FAFC] mt-2.5 tabular-numbers">
-            {formatMoney(totalIncome, currency)}
-          </p>
-          <div className="flex items-center gap-1.5 mt-2 text-xs font-medium">
-            <span className={`flex items-center gap-0.5 ${momStats.incMoM >= 0 ? 'text-[#16A34A] dark:text-[#22C55E]' : 'text-[#DC2626] dark:text-[#F87171]'}`}>
-              {momStats.incMoM >= 0 ? '▲' : '▼'} {Math.abs(momStats.incMoM)}%
-            </span>
-            <span className="text-[#64748B] dark:text-[#94A3B8] font-normal">vs last month</span>
-          </div>
-        </div>
-
-        {/* Card 2: Total Expenses */}
-        <div className="fintech-card fintech-card-hover p-5 relative overflow-hidden border-t-3 border-t-[#DC2626] dark:border-t-[#F87171]">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Total Expenses</span>
-            <div className="w-8 h-8 rounded-xl bg-red-50 dark:bg-red-950/50 text-[#DC2626] dark:text-[#F87171] flex items-center justify-center text-sm font-semibold">
-              🔴
-            </div>
-          </div>
-          <p className="text-2xl font-semibold text-[#1E293B] dark:text-[#F8FAFC] mt-2.5 tabular-numbers">
-            {formatMoney(totalExpenses, currency)}
-          </p>
-          <div className="flex items-center gap-1.5 mt-2 text-xs font-medium">
-            <span className={`flex items-center gap-0.5 ${momStats.expMoM <= 0 ? 'text-[#16A34A] dark:text-[#22C55E]' : 'text-[#DC2626] dark:text-[#F87171]'}`}>
-              {momStats.expMoM <= 0 ? '▼' : '▲'} {Math.abs(momStats.expMoM)}%
-            </span>
-            <span className="text-[#64748B] dark:text-[#94A3B8] font-normal">vs last month</span>
-          </div>
-        </div>
-
-        {/* Card 3: Remaining Balance */}
-        <div className="fintech-card fintech-card-hover p-5 relative overflow-hidden border-t-3 border-t-[#2563EB] dark:border-t-[#3B82F6]">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Remaining Balance</span>
-            <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-[#2563EB] dark:text-[#3B82F6] flex items-center justify-center text-sm font-semibold">
-              💳
-            </div>
-          </div>
-          <p
-            className={`text-2xl font-semibold mt-2.5 tabular-numbers ${
-              balance >= 0 ? 'text-[#1E293B] dark:text-[#F8FAFC]' : 'text-[#DC2626] dark:text-[#F87171]'
-            }`}
+      {/* ── 3. Touch-Friendly Quick Action Grid ── */}
+      <div>
+        <h2 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2.5">
+          Quick Actions & Destinations
+        </h2>
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2.5">
+          <button
+            onClick={() => onNavigate('transactions')}
+            className="fintech-card p-3 flex flex-col items-center justify-center text-center transition-all hover:-translate-y-0.5 active:scale-95 cursor-pointer group"
           >
-            {formatMoney(balance, currency)}
-          </p>
-          <div className="flex items-center gap-1.5 mt-2 text-xs font-medium">
-            <span className="text-[#2563EB] dark:text-[#3B82F6]">
-              Net {balance >= 0 ? 'Surplus' : 'Deficit'}
-            </span>
-            <span className="text-[#64748B] dark:text-[#94A3B8] font-normal">across all sources</span>
-          </div>
-        </div>
+            <div className="w-10 h-10 rounded-2xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center text-lg mb-1.5 group-hover:scale-110 transition-transform">
+              💸
+            </div>
+            <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Activity</span>
+            <span className="text-[10px] text-slate-400">All Ledger</span>
+          </button>
 
-        {/* Card 4: Savings Rate */}
-        <div className="fintech-card fintech-card-hover p-5 relative overflow-hidden border-t-3 border-t-[#7C3AED] dark:border-t-[#A78BFA]">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-[#64748B] dark:text-[#94A3B8]">Savings Rate</span>
-            <div className="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-950/50 text-[#7C3AED] dark:text-[#A78BFA] flex items-center justify-center text-sm font-semibold">
+          <button
+            onClick={() => onNavigate('budgets')}
+            className="fintech-card p-3 flex flex-col items-center justify-center text-center transition-all hover:-translate-y-0.5 active:scale-95 cursor-pointer group"
+          >
+            <div className="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg mb-1.5 group-hover:scale-110 transition-transform">
               🎯
             </div>
-          </div>
-          <p className="text-2xl font-semibold text-[#1E293B] dark:text-[#F8FAFC] mt-2.5 tabular-numbers">
-            {savingsRate}%
-          </p>
-          <div className="flex items-center gap-1.5 mt-2 text-xs font-medium">
-            <span className="text-[#7C3AED] dark:text-[#A78BFA]">
-              {formatMoney(savings, currency)}
-            </span>
-            <span className="text-[#64748B] dark:text-[#94A3B8] font-normal">saved this period</span>
-          </div>
+            <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Budgets</span>
+            <span className="text-[10px] text-slate-400">Limits & Caps</span>
+          </button>
+
+          <button
+            onClick={() => onNavigate('analytics')}
+            className="fintech-card p-3 flex flex-col items-center justify-center text-center transition-all hover:-translate-y-0.5 active:scale-95 cursor-pointer group"
+          >
+            <div className="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg mb-1.5 group-hover:scale-110 transition-transform">
+              📈
+            </div>
+            <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Analytics</span>
+            <span className="text-[10px] text-slate-400">Deep Charts</span>
+          </button>
+
+          <button
+            onClick={() => onNavigate('goals')}
+            className="fintech-card p-3 flex flex-col items-center justify-center text-center transition-all hover:-translate-y-0.5 active:scale-95 cursor-pointer group"
+          >
+            <div className="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg mb-1.5 group-hover:scale-110 transition-transform">
+              🏆
+            </div>
+            <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Goals</span>
+            <span className="text-[10px] text-slate-400">Milestones</span>
+          </button>
+
+          <button
+            onClick={() => onNavigate('ai-assistant')}
+            className="fintech-card p-3 flex flex-col items-center justify-center text-center transition-all hover:-translate-y-0.5 active:scale-95 cursor-pointer group"
+          >
+            <div className="w-10 h-10 rounded-2xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center text-lg mb-1.5 group-hover:scale-110 transition-transform">
+              ✨
+            </div>
+            <span className="text-xs font-bold text-slate-800 dark:text-slate-200">AI Advisor</span>
+            <span className="text-[10px] text-slate-400">Smart Tips</span>
+          </button>
+
+          <button
+            onClick={() => onNavigate('reports')}
+            className="fintech-card p-3 flex flex-col items-center justify-center text-center transition-all hover:-translate-y-0.5 active:scale-95 cursor-pointer group"
+          >
+            <div className="w-10 h-10 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-teal-600 dark:text-teal-400 flex items-center justify-center text-lg mb-1.5 group-hover:scale-110 transition-transform">
+              📑
+            </div>
+            <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Reports</span>
+            <span className="text-[10px] text-slate-400">CSV & PDF</span>
+          </button>
         </div>
       </div>
 
-      {/* ── 3. Charts Section ── */}
+      {/* ── 4. Charts Section: Cashflow & Category Donut ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left 2 Cols: Main Cashflow Chart */}
-        <div className="fintech-card p-5 lg:col-span-2 flex flex-col justify-between">
+        <div className="fintech-card p-5 sm:p-6 lg:col-span-2 flex flex-col justify-between">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
             <div>
-              <h2 className="text-lg font-semibold text-[#1E293B] dark:text-[#F8FAFC]">
+              <h2 className="text-base font-bold text-slate-900 dark:text-white">
                 Income vs Expenses vs Savings
               </h2>
-              <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5 font-normal">
-                Cashflow distribution and net savings
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                Cashflow distribution and historical net growth
               </p>
             </div>
 
-            {/* Time Filter Tabs */}
-            <div className="flex items-center gap-1 bg-slate-100 dark:bg-[#243244] p-1 rounded-xl border border-[#E2E8F0] dark:border-[#334155] self-start sm:self-auto">
-              {(['weekly', 'monthly', 'yearly'] as TimeScale[]).map((tab) => (
+            {/* TimeScale Filter Pill */}
+            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl self-start sm:self-auto border border-slate-200/80 dark:border-slate-700/80">
+              {(['weekly', 'monthly', 'yearly'] as TimeScale[]).map((scale) => (
                 <button
-                  key={tab}
-                  onClick={() => setTimeScale(tab)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium capitalize transition-all ${
-                    timeScale === tab
-                      ? 'bg-white dark:bg-[#1E293B] text-[#2563EB] dark:text-[#60A5FA] shadow-xs'
-                      : 'text-[#64748B] hover:text-[#1E293B] dark:text-[#94A3B8] dark:hover:text-white'
+                  key={scale}
+                  onClick={() => setTimeScale(scale)}
+                  className={`px-3 py-1 rounded-lg text-xs font-semibold capitalize transition-all ${
+                    timeScale === scale
+                      ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-xs'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
-                  {tab}
+                  {scale}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Chart Container */}
-          <div className="h-72 w-full">
+          <div className="h-64 sm:h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={mainChartData}
-                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-                barCategoryGap="20%"
-              >
-                <CartesianGrid strokeDasharray="3 3" opacity={isDark ? 0.15 : 0.4} stroke={isDark ? '#334155' : '#E2E8F0'} vertical={false} />
+              <BarChart data={mainChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" opacity={isDark ? 0.1 : 0.08} vertical={false} />
                 <XAxis
                   dataKey="label"
-                  tick={{ fontSize: 12, fill: isDark ? '#94A3B8' : '#64748B' }}
+                  tick={{ fontSize: 11, fill: isDark ? '#94A3B8' : '#64748B' }}
                   axisLine={false}
                   tickLine={false}
                 />
-                <YAxis tick={{ fontSize: 12, fill: isDark ? '#94A3B8' : '#64748B' }} axisLine={false} tickLine={false} />
+                <YAxis
+                  tick={{ fontSize: 11, fill: isDark ? '#94A3B8' : '#64748B' }}
+                  axisLine={false}
+                  tickLine={false}
+                />
                 <Tooltip
                   formatter={(val: any) => [formatMoney(Number(val) || 0, currency), '']}
                   contentStyle={{
-                    backgroundColor: isDark ? '#1E293B' : '#FFFFFF',
-                    borderRadius: '10px',
-                    border: isDark ? '1px solid #334155' : '1px solid #E2E8F0',
-                    color: isDark ? '#F8FAFC' : '#1E293B',
-                    fontSize: '12px',
-                    fontWeight: 500,
-                    boxShadow: isDark
-                      ? '0 10px 25px -5px rgba(0,0,0,0.5)'
-                      : '0 10px 25px -5px rgba(15, 23, 42, 0.08)',
+                    backgroundColor: isDark ? '#111827' : '#FFFFFF',
+                    borderRadius: '12px',
+                    border: isDark ? '1px solid #1F2937' : '1px solid #E2E8F0',
+                    color: isDark ? '#FFFFFF' : '#0F172A',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)',
                   }}
                 />
                 <Legend
-                  wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }}
+                  wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }}
                   iconType="circle"
                 />
-                <Bar dataKey="income" name="Income" fill={isDark ? '#22C55E' : '#16A34A'} radius={[4, 4, 0, 0]} />
-                <Bar dataKey="expense" name="Expenses" fill={isDark ? '#F87171' : '#DC2626'} radius={[4, 4, 0, 0]} />
-                <Bar dataKey="savings" name="Savings" fill={isDark ? '#3B82F6' : '#2563EB'} radius={[4, 4, 0, 0]} />
+                <Bar dataKey="income" name="Income" fill="#10B981" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="expense" name="Expenses" fill="#F43F5E" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="savings" name="Savings" fill="#3B82F6" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
         {/* Right 1 Col: Expense Breakdown Donut Chart */}
-        <div className="fintech-card p-5 flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-2">
+        <div className="fintech-card p-5 sm:p-6 flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-3">
             <div>
-              <h2 className="text-lg font-semibold text-[#1E293B] dark:text-[#F8FAFC]">Expense Breakdown</h2>
-              <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5 font-normal">Top categories this month</p>
+              <h2 className="text-base font-bold text-slate-900 dark:text-white">Expense Breakdown</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Category distribution</p>
             </div>
-            <span className="text-xs font-semibold text-[#2563EB] dark:text-[#60A5FA] bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full">
-              This Month
+            <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full">
+              {selectedMonth}
             </span>
           </div>
 
           {categoryData.length === 0 ? (
-            <div className="py-16 text-center text-sm text-[#64748B] dark:text-[#94A3B8]">
-              <span>🍩 No expense records for this month.</span>
+            <div className="py-16 text-center text-xs text-slate-500 dark:text-slate-400">
+              <span>🍩 No expense records for this period.</span>
             </div>
           ) : (
             <div className="space-y-3">
-              {/* Donut Chart with Center Total */}
               <div className="h-44 w-full relative flex items-center justify-center">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={categoryData}
-                      innerRadius={50}
+                      innerRadius={48}
                       outerRadius={70}
                       paddingAngle={3}
                       dataKey="value"
@@ -546,47 +655,36 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                     <Tooltip
                       formatter={(val: any) => formatMoney(Number(val) || 0, currency)}
                       contentStyle={{
-                        backgroundColor: isDark ? '#1E293B' : '#FFFFFF',
-                        borderRadius: '10px',
-                        border: isDark ? '1px solid #334155' : '1px solid #E2E8F0',
-                        color: isDark ? '#F8FAFC' : '#1E293B',
-                        fontSize: '12px',
-                        fontWeight: 500,
-                        boxShadow: isDark
-                          ? '0 10px 25px -5px rgba(0,0,0,0.5)'
-                          : '0 10px 25px -5px rgba(15, 23, 42, 0.08)',
+                        backgroundColor: isDark ? '#111827' : '#FFFFFF',
+                        borderRadius: '12px',
+                        border: isDark ? '1px solid #1F2937' : '1px solid #E2E8F0',
+                        color: isDark ? '#FFFFFF' : '#0F172A',
+                        fontSize: '11px',
+                        fontWeight: 600,
                       }}
                     />
                   </PieChart>
                 </ResponsiveContainer>
-
-                {/* Center Total in Donut Hole */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
-                  <span className="text-xs text-[#64748B] dark:text-[#94A3B8] font-medium">Total Expenses</span>
-                  <span className="text-sm font-semibold text-[#1E293B] dark:text-[#F8FAFC] tabular-numbers">
-                    {formatMoney(totalExpenses, currency)}
-                  </span>
-                </div>
               </div>
 
-              {/* Category Legend */}
-              <div className="space-y-2 max-h-36 overflow-y-auto pr-1">
-                {categoryData.map((item) => (
+              {/* Category Legend List */}
+              <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                {categoryData.slice(0, 5).map((item) => (
                   <div key={item.name} className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2 min-w-0">
                       <span
                         className="w-2.5 h-2.5 rounded-full shrink-0"
                         style={{ backgroundColor: CATEGORY_COLORS[item.name] || '#64748B' }}
                       />
-                      <span className="font-medium text-[#1E293B] dark:text-[#F8FAFC] truncate">
+                      <span className="font-semibold text-slate-800 dark:text-slate-200 truncate">
                         {CATEGORY_ICONS[item.name] || '📦'} {item.name}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-[#64748B] dark:text-[#94A3B8] font-normal tabular-numbers">
+                      <span className="text-slate-500 dark:text-slate-400 tabular-numbers font-medium">
                         {item.percent}%
                       </span>
-                      <span className="font-semibold text-[#1E293B] dark:text-[#F8FAFC] tabular-numbers">
+                      <span className="font-bold text-slate-900 dark:text-white tabular-numbers">
                         {formatMoney(item.value, currency)}
                       </span>
                     </div>
@@ -598,246 +696,183 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         </div>
       </div>
 
-      {/* ── 4. Monthly Budget Progress Section ── */}
-      <div className="fintech-card p-5">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-lg font-semibold text-[#1E293B] dark:text-[#F8FAFC]">Budget Tracker</h2>
-            <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5 font-normal">Monthly Category Spending Limits</p>
+      {/* ── 5. Category Budget Health Indicators ── */}
+      {budgetProgress.length > 0 && (
+        <div className="fintech-card p-5 sm:p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-base font-bold text-slate-900 dark:text-white">Active Budget Caps</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                Category spending thresholds & alerts
+              </p>
+            </div>
+            <button
+              onClick={() => onNavigate('budgets')}
+              className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+            >
+              Manage All →
+            </button>
           </div>
-          <button
-            onClick={() => onNavigate('budgets')}
-            className="text-sm font-medium text-[#2563EB] dark:text-[#60A5FA] hover:underline"
-          >
-            Manage Budgets →
-          </button>
-        </div>
 
-        {budgetProgress.length === 0 ? (
-          <div className="py-8 text-center text-sm text-[#64748B] dark:text-[#94A3B8]">
-            <span>🎯 No budgets configured. Click "Create Budget" to set category limits.</span>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
             {budgetProgress.slice(0, 6).map((b) => (
               <div
                 key={b.id || b.category}
-                className="p-4 rounded-xl bg-white dark:bg-[#243244] border border-[#E2E8F0] dark:border-[#334155] shadow-xs space-y-2.5 transition-all hover:shadow-sm"
+                className="p-3.5 rounded-2xl bg-slate-50/80 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 space-y-2"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-base">{CATEGORY_ICONS[b.category] || '📦'}</span>
-                    <span className="text-sm font-semibold text-[#1E293B] dark:text-[#F8FAFC]">{b.category}</span>
+                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200">{b.category}</span>
                   </div>
                   <span
-                    className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                       b.isOver
-                        ? 'bg-red-50 text-[#DC2626] dark:bg-red-950/60 dark:text-[#F87171]'
-                        : b.status === 'warning'
-                        ? 'bg-amber-50 text-[#D97706] dark:bg-amber-950/60 dark:text-[#FBBF24]'
-                        : 'bg-green-50 text-[#16A34A] dark:bg-green-950/60 dark:text-[#22C55E]'
+                        ? 'bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400'
+                        : b.percent >= 80
+                        ? 'bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400'
+                        : 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400'
                     }`}
                   >
                     {b.percent}%
                   </span>
                 </div>
 
-                <div className="flex items-baseline justify-between text-xs font-medium">
-                  <span className="text-[#1E293B] dark:text-[#F8FAFC] tabular-numbers font-semibold">
+                <div className="flex items-baseline justify-between text-xs">
+                  <span className="font-bold text-slate-900 dark:text-white tabular-numbers">
                     {formatMoney(b.spent, currency)}
                   </span>
-                  <span className="text-[#64748B] dark:text-[#94A3B8] tabular-numbers">
-                    / {formatMoney(b.limitAmount, currency)}
+                  <span className="text-slate-400 tabular-numbers text-[11px]">
+                    limit {formatMoney(b.limitAmount, currency)}
                   </span>
                 </div>
 
-                {/* Progress Bar */}
-                <div className="w-full h-2 bg-slate-100 dark:bg-[#1E293B] rounded-full overflow-hidden">
+                {/* Bar */}
+                <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                   <div
-                    className="h-full rounded-full transition-all duration-300"
-                    style={{
-                      width: `${b.percent}%`,
-                      backgroundColor: b.color,
-                    }}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between text-xs font-normal pt-0.5">
-                  <span className="text-[#64748B] dark:text-[#94A3B8]">Remaining</span>
-                  <span
-                    className={`font-semibold tabular-numbers ${
-                      b.isOver ? 'text-[#DC2626] dark:text-[#F87171]' : 'text-[#16A34A] dark:text-[#22C55E]'
+                    className={`h-full rounded-full transition-all duration-300 ${
+                      b.isOver ? 'bg-rose-500' : b.percent >= 80 ? 'bg-amber-400' : 'bg-emerald-500'
                     }`}
-                  >
-                    {b.isOver ? `Over by ${formatMoney(b.spent - b.limitAmount, currency)}` : formatMoney(b.remaining, currency)}
-                  </span>
+                    style={{ width: `${b.percent}%` }}
+                  />
                 </div>
               </div>
             ))}
           </div>
-        )}
-      </div>
-
-      {/* ── 5. AI Financial Insights Section ── */}
-      <div className="fintech-card p-5 relative overflow-hidden">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-[#7C3AED] dark:text-[#A78BFA] flex items-center justify-center text-sm font-semibold shadow-xs">
-              ✨
-            </div>
-            <div>
-              <h2 className="text-lg font-semibold text-[#1E293B] dark:text-[#F8FAFC]">AI Financial Insights</h2>
-              <p className="text-sm text-[#64748B] dark:text-[#94A3B8] font-normal">Continuous personalized spending intelligence</p>
-            </div>
-          </div>
-          <button
-            onClick={() => onNavigate('ai-assistant')}
-            className="text-sm font-medium text-[#7C3AED] dark:text-[#A78BFA] hover:underline flex items-center gap-1"
-          >
-            Open AI Assistant →
-          </button>
         </div>
+      )}
 
-        {/* 3 Insight Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Card 1: Spending Alert */}
-          <div className="p-4 rounded-xl bg-white dark:bg-[#243244] border border-red-100 dark:border-red-950/40 shadow-xs space-y-1.5">
-            <div className="flex items-center gap-2">
-              <span className="w-6 h-6 rounded-lg bg-red-50 dark:bg-red-950/50 text-[#DC2626] dark:text-[#F87171] flex items-center justify-center text-xs font-semibold">
-                ⚠️
-              </span>
-              <span className="text-sm font-semibold text-[#1E293B] dark:text-[#F8FAFC]">Spending Alert</span>
-            </div>
-            <p className="text-xs text-[#64748B] dark:text-[#94A3B8] leading-relaxed font-normal">
-              Your Food & Dining expenses increased by <strong className="text-[#DC2626] dark:text-[#F87171] font-semibold">18%</strong> compared to your 3-month average.
-            </p>
-          </div>
-
-          {/* Card 2: Savings Opportunity */}
-          <div className="p-4 rounded-xl bg-white dark:bg-[#243244] border border-green-100 dark:border-green-950/40 shadow-xs space-y-1.5">
-            <div className="flex items-center gap-2">
-              <span className="w-6 h-6 rounded-lg bg-green-50 dark:bg-green-950/50 text-[#16A34A] dark:text-[#22C55E] flex items-center justify-center text-xs font-semibold">
-                💡
-              </span>
-              <span className="text-sm font-semibold text-[#1E293B] dark:text-[#F8FAFC]">Savings Opportunity</span>
-            </div>
-            <p className="text-xs text-[#64748B] dark:text-[#94A3B8] leading-relaxed font-normal">
-              You could save approximately <strong className="text-[#16A34A] dark:text-[#22C55E] font-semibold">{formatMoney(1500, currency)}</strong> by reducing discretionary weekend orders.
-            </p>
-          </div>
-
-          {/* Card 3: Smart Budget */}
-          <div className="p-4 rounded-xl bg-white dark:bg-[#243244] border border-purple-100 dark:border-purple-950/40 shadow-xs space-y-1.5">
-            <div className="flex items-center gap-2">
-              <span className="w-6 h-6 rounded-lg bg-purple-50 dark:bg-purple-950/50 text-[#7C3AED] dark:text-[#A78BFA] flex items-center justify-center text-xs font-semibold">
-                🎯
-              </span>
-              <span className="text-sm font-semibold text-[#1E293B] dark:text-[#F8FAFC]">Smart Budget</span>
-            </div>
-            <p className="text-xs text-[#64748B] dark:text-[#94A3B8] leading-relaxed font-normal">
-              Your optimal 50/30/20 recommended Food budget for next month is <strong className="text-[#7C3AED] dark:text-[#A78BFA] font-semibold">{formatMoney(7000, currency)}</strong>.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* ── 6. Recent Transactions Table ── */}
-      <div className="fintech-card p-5">
-        <div className="flex items-center justify-between mb-4">
+      {/* ── 6. Mobile-First Recent Activity Feed ── */}
+      <div className="fintech-card p-5 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <div>
-            <h2 className="text-lg font-semibold text-[#1E293B] dark:text-[#F8FAFC]">Recent Transactions</h2>
-            <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5 font-normal">Latest account inflows and outflows</p>
+            <h2 className="text-base font-bold text-slate-900 dark:text-white">Recent Activity</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Latest cashflows across your accounts
+            </p>
           </div>
-          <button
-            onClick={() => onNavigate('transactions')}
-            className="text-sm font-medium text-[#2563EB] dark:text-[#60A5FA] hover:underline"
-          >
-            View All Transactions →
-          </button>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            <input
+              type="text"
+              placeholder="Search..."
+              value={recentSearch}
+              onChange={(e) => setRecentSearch(e.target.value)}
+              className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs text-slate-800 dark:text-slate-200 outline-none w-28 sm:w-36"
+            />
+            <select
+              value={recentCatFilter}
+              onChange={(e) => setRecentCatFilter(e.target.value)}
+              className="px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs text-slate-700 dark:text-slate-200 outline-none font-medium"
+            >
+              <option value="all">All</option>
+              {Object.keys(CATEGORY_ICONS).map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={() => onNavigate('transactions')}
+              className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline shrink-0"
+            >
+              View All ({transactions.length}) →
+            </button>
+          </div>
         </div>
 
         {recentTransactions.length === 0 ? (
-          <div className="py-8 text-center text-sm text-[#64748B] dark:text-[#94A3B8]">
-            <span>💸 No recent transactions. Click "+ Add Expense" or "+ Add Income" above.</span>
+          <div className="py-12 text-center text-xs text-slate-500 dark:text-slate-400">
+            <span>No transactions found matching your criteria.</span>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b border-[#E2E8F0] dark:border-[#334155] text-xs font-semibold text-[#64748B] dark:text-[#94A3B8]">
-                  <th className="pb-3 px-3">Transaction</th>
-                  <th className="pb-3 px-3">Category</th>
-                  <th className="pb-3 px-3">Date</th>
-                  <th className="pb-3 px-3">Payment</th>
-                  <th className="pb-3 px-3 text-right">Amount</th>
-                  <th className="pb-3 px-3 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#E2E8F0] dark:divide-[#334155] text-sm">
-                {recentTransactions.map((tx) => (
-                  <tr
-                    key={tx.id}
-                    className="hover:bg-slate-50 dark:hover:bg-[#243244] transition-colors group"
+          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+            {recentTransactions.map((tx) => (
+              <div
+                key={tx.id}
+                className="py-3 flex items-center justify-between gap-3 group transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/30 rounded-xl px-2"
+              >
+                {/* Left: Icon & Details */}
+                <div className="flex items-center gap-3 min-w-0">
+                  <div
+                    className={`w-10 h-10 rounded-2xl flex items-center justify-center text-lg shrink-0 ${
+                      tx.type === 'income'
+                        ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400'
+                        : 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400'
+                    }`}
                   >
-                    <td className="py-3 px-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-[#243244] flex items-center justify-center text-sm shrink-0">
-                          {CATEGORY_ICONS[tx.category] || '📦'}
-                        </div>
-                        <div>
-                          <p className="font-semibold text-sm text-[#1E293B] dark:text-[#F8FAFC] leading-tight">
-                            {tx.description}
-                          </p>
-                          {tx.notes && (
-                            <p className="text-xs text-[#64748B] dark:text-[#94A3B8] truncate max-w-xs mt-0.5 font-normal">
-                              {tx.notes}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-3 px-3">
-                      <span className="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-100 dark:bg-[#243244] text-[#1E293B] dark:text-[#F8FAFC]">
-                        {tx.category}
-                      </span>
-                    </td>
-                    <td className="py-3 px-3 text-xs text-[#64748B] dark:text-[#94A3B8] font-normal whitespace-nowrap">
-                      {new Date(tx.date).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </td>
-                    <td className="py-3 px-3">
-                      <span className="text-xs font-medium text-[#64748B] dark:text-[#94A3B8]">
-                        {tx.paymentMethod || 'Cash'}
-                      </span>
-                    </td>
-                    <td
-                      className={`py-3 px-3 text-right font-semibold tabular-numbers whitespace-nowrap text-sm ${
-                        tx.type === 'income' ? 'text-[#16A34A] dark:text-[#22C55E]' : 'text-[#DC2626] dark:text-[#F87171]'
-                      }`}
+                    {CATEGORY_ICONS[tx.category] || '📦'}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate">
+                      {tx.description}
+                    </p>
+                    <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-0.5">
+                      <span className="font-medium text-slate-600 dark:text-slate-300">{tx.category}</span>
+                      <span>•</span>
+                      <span>{new Date(tx.date).toLocaleDateString([], { month: 'short', day: 'numeric' })}</span>
+                      {tx.paymentMethod && (
+                        <>
+                          <span>•</span>
+                          <span>{tx.paymentMethod}</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right: Amount & Actions */}
+                <div className="flex items-center gap-3 shrink-0">
+                  <span
+                    className={`font-bold text-xs sm:text-sm tabular-numbers ${
+                      tx.type === 'income'
+                        ? 'text-emerald-600 dark:text-emerald-400'
+                        : 'text-rose-600 dark:text-rose-400'
+                    }`}
+                  >
+                    {tx.type === 'income' ? '+' : '−'}
+                    {formatMoney(tx.amount, currency)}
+                  </span>
+
+                  <div className="flex items-center gap-1 opacity-75 group-hover:opacity-100">
+                    <button
+                      onClick={() => setTransactionModal({ open: true, presetType: tx.type, editing: tx })}
+                      className="p-1 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-slate-800"
+                      title="Edit"
                     >
-                      {tx.type === 'income' ? '+' : '−'} {formatMoney(tx.amount, currency)}
-                    </td>
-                    <td className="py-3 px-3 text-right whitespace-nowrap">
-                      <div className="flex items-center justify-end gap-1 opacity-80 group-hover:opacity-100">
-                        <button
-                          onClick={() => setTransactionModal({ open: true, presetType: tx.type, editing: tx })}
-                          className="p-1.5 rounded-lg text-[#64748B] hover:text-[#2563EB] hover:bg-blue-50 dark:hover:bg-[#1E293B] transition-colors"
-                          title="Edit"
-                        >
-                          ✏️
-                        </button>
-                        <button
-                          onClick={() => setDeleteModal({ open: true, transaction: tx })}
-                          className="p-1.5 rounded-lg text-[#64748B] hover:text-[#DC2626] hover:bg-red-50 dark:hover:bg-[#1E293B] transition-colors"
-                          title="Delete"
-                        >
-                          🗑️
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                      ✏️
+                    </button>
+                    <button
+                      onClick={() => setDeleteModal({ open: true, transaction: tx })}
+                      className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800"
+                      title="Delete"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

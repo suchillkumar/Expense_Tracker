@@ -13,6 +13,9 @@ import { ReportsView } from './components/Reports/ReportsView'
 import { ProfileView } from './components/Profile/ProfileView'
 import { LoginPage } from './components/Auth/LoginPage'
 import { LandingPage } from './components/Landing/LandingPage'
+import { GoalsView } from './components/Goals/GoalsView'
+import { TransactionForm } from './components/Transactions/TransactionForm'
+import { TransactionType } from './types'
 
 type View =
   | 'dashboard'
@@ -21,15 +24,18 @@ type View =
   | 'analytics'
   | 'ai-assistant'
   | 'reports'
+  | 'goals'
   | 'profile'
 
 function AppContent() {
   const { user } = useAuth()
   const [showAuthForm, setShowAuthForm] = useState(false)
+  const [quickAddOpen, setQuickAddOpen] = useState(false)
+  const [quickAddType, setQuickAddType] = useState<TransactionType>('expense')
   const [view, setView] = useState<View>(() => {
     const param = new URLSearchParams(window.location.search).get('view') as View | null
     return param &&
-      ['dashboard', 'transactions', 'budgets', 'analytics', 'ai-assistant', 'reports', 'profile'].includes(param)
+      ['dashboard', 'transactions', 'budgets', 'analytics', 'ai-assistant', 'reports', 'goals', 'profile'].includes(param)
       ? param
       : 'dashboard'
   })
@@ -44,20 +50,46 @@ function AppContent() {
         />
       )
     }
-    return <LoginPage />
+    return <LoginPage onBackToHome={() => setShowAuthForm(false)} />
   }
 
-  // 2. Authenticated users: Strict 8-item navigation and view routing
+  // 2. Authenticated users: Mobile-first navigation and view routing
   return (
-    <Layout active={view} onNavigate={(key) => setView(key as View)}>
-      {view === 'dashboard' && <Dashboard onNavigate={(k) => setView(k as View)} />}
-      {view === 'transactions' && <TransactionList />}
-      {view === 'budgets' && <BudgetsView />}
-      {view === 'analytics' && <AnalyticsView />}
-      {view === 'ai-assistant' && <AIAssistantView />}
-      {view === 'reports' && <ReportsView />}
-      {view === 'profile' && <ProfileView />}
-    </Layout>
+    <>
+      <Layout
+        active={view}
+        onNavigate={(key) => setView(key as View)}
+        onOpenAddTransaction={(t = 'expense') => {
+          setQuickAddType(t)
+          setQuickAddOpen(true)
+        }}
+      >
+        {view === 'dashboard' && (
+          <Dashboard
+            onNavigate={(k) => setView(k as View)}
+            onOpenAdd={(t = 'expense') => {
+              setQuickAddType(t)
+              setQuickAddOpen(true)
+            }}
+          />
+        )}
+        {view === 'transactions' && <TransactionList />}
+        {view === 'budgets' && <BudgetsView />}
+        {view === 'analytics' && <AnalyticsView />}
+        {view === 'goals' && <GoalsView />}
+        {view === 'ai-assistant' && <AIAssistantView />}
+        {view === 'reports' && <ReportsView />}
+        {view === 'profile' && <ProfileView />}
+      </Layout>
+
+      {/* Global Quick Add Transaction Sheet / Modal */}
+      {quickAddOpen && (
+        <TransactionForm
+          presetType={quickAddType}
+          onClose={() => setQuickAddOpen(false)}
+        />
+      )}
+    </>
   )
 }
 
